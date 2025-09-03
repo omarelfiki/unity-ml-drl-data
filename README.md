@@ -4,9 +4,6 @@
 unity-ml-drl-data is a GitHub repository for experienting with Deep Reinforcement Learning (DRL) using Unity and ML-Agents. This project uses simulated 3D enviroments to study and train agents with DRL algorithms, while logging performance and behavioral data for analysis using Machine Learning Techniques.
 
 
-This project uses the ML-Agent package by Unity : https://github.com/DennisSoemers/ml-agents/tree/fix-numpy-release-21-branch
-
-
 ### Project Structure
 ```
 unity-ml-drl-data/
@@ -37,6 +34,15 @@ source venv/bin/activate   # Windows: venv\Scripts\activate
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
+
+### Unity Dependencies
+
+This project uses the official Unity ML-Agents package along with Barracuda for inference.
+
+- **ML-Agents (C#)**: Installed from the Unity Package Manager (`com.unity.ml-agents`)
+- **Barracuda**: Installed automatically as a dependency
+
+> No manual action is required — Unity will add these packages when you open the project.
 
 ## Contributors
 * @omarelfiki
