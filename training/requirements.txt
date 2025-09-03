@@ -1,10 +1,13 @@
-# Core ML-Agents (Dennis Soemers fork, fix-numpy-release-21-branch)
-git+https://github.com/DennisSoemers/ml-agents.git@fix-numpy-release-21-branch#egg=mlagents
-git+https://github.com/DennisSoemers/ml-agents-envs.git@fix-numpy-release-21-branch#egg=mlagents-envs
+# fork (Python side only)
+git+https://github.com/DennisSoemers/ml-agents.git@fix-numpy-release-21-branch#egg=mlagents&subdirectory=ml-agents
+git+https://github.com/DennisSoemers/ml-agents.git@fix-numpy-release-21-branch#egg=mlagents-envs&subdirectory=ml-agents-envs
 
 # Deep Learning
-torch>=2.0.0,<2.5.0       # PyTorch for DRL training
+torch>=2.0.0,<2.5.0
 numpy>=1.21,<2.0
+
+# ONNX runtime for Barracuda model export
+onnx==1.14.1
 
 # Data handling and analysis
 pandas>=1.5,<2.2

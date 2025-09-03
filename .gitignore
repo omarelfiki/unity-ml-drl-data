@@ -103,3 +103,7 @@ InitTestScene*.unity*
 
 # IDE
 .idea/
+
+# Ignore Python virtual environments
+venv/
+training/venv/
