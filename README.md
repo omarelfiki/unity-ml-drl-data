@@ -1,7 +1,7 @@
 # unity-ml-drl-data
-# Group 6 - P2-1: Artificial Intelligence & Machine Learning
+### Group 6 - P2-1: Artificial Intelligence & Machine Learning
 
-# IMPORTANT: ML-Agent Link: https://github.com/DennisSoemers/ml-agents/tree/fix-numpy-release-21-branch
+### IMPORTANT: ML-Agent Link: https://github.com/DennisSoemers/ml-agents/tree/fix-numpy-release-21-branch
 
 ## Group Members
 1. Omar Elfiki
