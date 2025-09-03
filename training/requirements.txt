@@ -1,0 +1,16 @@
+# Core ML-Agents and Python dependencies
+mlagents==0.30.0
+mlagents-envs==0.30.0
+torch>=2.0.0,<2.5.0       # PyTorch for neural network training
+numpy>=1.21,<2.0
+pandas>=1.5,<2.2          # For data logging and analysis
+matplotlib>=3.7,<4.0      # For plotting and visualizations
+
+# Optional: Experiment tracking and notebooks
+tensorboard>=2.14,<3.0    # For training visualization
+jupyter>=1.0,<2.0         # For notebooks
+notebook>=7.0,<8.0
+scikit-learn>=1.3,<2.0    # For downstream ML analysis
+
+# Version management
+python-dotenv>=1.0,<2.0
