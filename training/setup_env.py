@@ -37,11 +37,13 @@ def main():
 
     run(f"{pip} install --upgrade pip setuptools wheel")
 
-    run(
-        f"{pip} install --no-deps "
-        "git+https://github.com/DennisSoemers/ml-agents.git@fix-numpy-release-21-branch#egg=mlagents&subdirectory=ml-agents "
-        "git+https://github.com/DennisSoemers/ml-agents.git@fix-numpy-release-21-branch#egg=mlagents-envs&subdirectory=ml-agents-envs"
-    )
+    run(f"""{pip} install --no-deps \
+      "git+https://github.com/DennisSoemers/ml-agents.git@fix-numpy-release-21-branch#egg=mlagents&subdirectory=ml-agents"
+    """)
+
+    run(f"""{pip} install --no-deps \
+      "git+https://github.com/DennisSoemers/ml-agents.git@fix-numpy-release-21-branch#egg=mlagents-envs&subdirectory=ml-agents-envs"
+    """)
 
     req_file = ROOT / "requirements.txt"
     if constraints_path and constraints_path.exists():
