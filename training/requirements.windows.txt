@@ -1,0 +1,31 @@
+# Dennis Soemers fork (Python side)
+git+https://github.com/DennisSoemers/ml-agents.git@fix-numpy-release-21-branch#egg=mlagents&subdirectory=ml-agents
+git+https://github.com/DennisSoemers/ml-agents.git@fix-numpy-release-21-branch#egg=mlagents-envs&subdirectory=ml-agents-envs
+
+# Core DL stack
+torch>=2.0,<2.5
+numpy==1.23.5
+
+# ONNX + protobuf
+onnx==1.12.0
+protobuf==3.19.6
+
+# Runtime deps
+grpcio==1.48.2
+cattrs==1.5.0
+h5py==3.8.0
+huggingface_hub>=0.14,<0.35
+cloudpickle>=2.2,<3.0
+gym==0.26.2
+pettingzoo==1.15.0
+
+# Data science + utilities
+pandas>=1.5,<2.2
+matplotlib>=3.7,<4.0
+tensorboard>=2.14,<3.0
+scikit-learn>=1.3,<2.0
+python-dotenv>=1.0,<2.0
+
+# notebooks
+jupyter>=1.0,<2.0
+notebook>=7.0,<8.0
