@@ -12,7 +12,6 @@ unity-ml-drl-data/
 ├── training/              # Python training scripts, configs, and utilities
 ├── data/                  # Collected data and schema definitions
 ├── docs/                  # Documentation, research notes, and reports
-├── setup_env.py           # Python enviroment setup file
 └── README.md              # This file
 ```
 
@@ -40,9 +39,6 @@ This will:
 * Install all dependencies from the appropriate requirements file (based on your system).
 
 > Ensure you have Python 3.10.12 available (via pyenv, conda, or system Python).
-> After running setup_env.py, activate the environment manually:
-* macOS/Linux: source venv/bin/activate
-* Windows (PowerShell): .\venv\Scripts\Activate.ps1
 
 ### Unity Dependencies
 
