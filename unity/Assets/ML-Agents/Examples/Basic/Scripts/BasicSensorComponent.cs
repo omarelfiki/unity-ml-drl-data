@@ -14,7 +14,7 @@ namespace Unity.MLAgentsExamples
         /// <summary>
         /// Creates a BasicSensor.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Corresponding sensors.</returns>
         public override ISensor[] CreateSensors()
         {
             return new ISensor[] { new BasicSensor(basicController) };

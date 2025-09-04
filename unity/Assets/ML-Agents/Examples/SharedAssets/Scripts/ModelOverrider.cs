@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Sentis;
+using Unity.InferenceEngine;
 using System.IO;
 using Unity.MLAgents;
 using Unity.MLAgents.Policies;
@@ -111,7 +111,6 @@ namespace Unity.MLAgentsExamples
         /// Get the asset path to use from the commandline arguments.
         /// Can be called multiple times - if m_HaveProcessedCommandLine is set, will have no effect.
         /// </summary>
-        /// <returns></returns>
         void GetAssetPathFromCommandLine()
         {
             if (m_HaveProcessedCommandLine)
@@ -303,8 +302,8 @@ namespace Unity.MLAgentsExamples
         ModelAsset LoadSentisModel(byte[] rawModel)
         {
             var asset = ScriptableObject.CreateInstance<ModelAsset>();
-            asset.modelAssetData = ScriptableObject.CreateInstance<ModelAssetData>();
-            asset.modelAssetData.value = rawModel;
+            // asset.modelAssetData = ScriptableObject.CreateInstance<ModelAssetData>();
+            // asset.modelAssetData.value = rawModel;
             return asset;
         }
 

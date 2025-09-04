@@ -16,7 +16,7 @@ namespace Unity.MLAgentsExamples
         /// <summary>
         /// Creates a BasicActuator.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Corresponding actuators.</returns>
         public override IActuator[] CreateActuators()
         {
             return new IActuator[] { new BasicActuator(basicController) };
