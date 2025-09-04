@@ -12,39 +12,37 @@ unity-ml-drl-data/
 ├── training/              # Python training scripts, configs, and utilities
 ├── data/                  # Collected data and schema definitions
 ├── docs/                  # Documentation, research notes, and reports
+├── setup_env.py           # Python enviroment setup file
 └── README.md              # This file
 ```
 
 ### Installation
-1. Clone Repository
+**1. Clone Repository**
 ```
 git clone https://github.com/omarelfiki/unity-ml-drl-data.git
 cd unity-ml-drl-data
 ```
 
-2. Install Unity
-* Download and Install Unity Hub and recommended Unity Editor version: 6.2 (6000.2.2f1)
+**2. Install Unity**
+* Download and Install Unity Hub
+* Install recommended Unity Editor version: 6.2 (6000.2.2f1)
 * Open the ```/unity``` folder as a Unity project.
 
-3. Set up Python enviroment (Python 3.10.12)
-   
-  macOS (ARM-64):
-  ```
-  cd training
-  python3 -m venv venv
-  source venv/bin/activate
-  pip install --upgrade pip
-  pip install -r requirements.arm64.txt
-  ```
-  Windows:
-  ```
-  cd training
-  py -3.10 -m venv venv
-  .\venv\Scripts\Activate.ps1
-  
-  python -m pip install --upgrade pip setuptools wheel
-  pip install -r requirements.windows.txt
-  ```
+**3. Set up Python enviroment (Python 3.10.12)**   
+From the root of the repository:
+```
+cd training
+python setup_env.py
+```
+
+This will:
+* Create a Python virtual environment in training/venv.
+* Install all dependencies from the appropriate requirements file (based on your system).
+
+> Ensure you have Python 3.10.12 available (via pyenv, conda, or system Python).
+> After running setup_env.py, activate the environment manually:
+* macOS/Linux: source venv/bin/activate
+* Windows (PowerShell): .\venv\Scripts\Activate.ps1
 
 ### Unity Dependencies
 
