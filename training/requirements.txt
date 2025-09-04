@@ -1,19 +1,19 @@
-# Tested on macOS ARM64 (M-series), Python 3.10.12
+# Third-party deps
+torch>=2.0,<2.5
 numpy==1.23.5
 protobuf==3.20.3
 onnx==1.14.1
 grpcio==1.54.0
 cattrs==1.5.0
 h5py==3.8.0
+huggingface_hub>=0.14,<0.35
+cloudpickle>=2.2,<3.0
 gym==0.26.2
 pettingzoo==1.15.0
-huggingface_hub==0.34.4
-cloudpickle==2.2.1
-torch==2.4.1
-pandas==2.1.4
-matplotlib==3.10.6
-tensorboard==2.20.0
-scikit-learn==1.7.1
-python-dotenv==1.1.1
-jupyter==1.1.1
-notebook==7.4.5
+pandas>=1.5,<2.2
+matplotlib>=3.7,<4.0
+tensorboard>=2.14,<3.0
+scikit-learn>=1.3,<2.0
+python-dotenv>=1.0,<2.0
+jupyter>=1.0,<2.0
+notebook>=7.0,<8.0

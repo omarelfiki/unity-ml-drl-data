@@ -1,8 +1,8 @@
 # Tested on Windows 10/11 x86_64, Python 3.10.x
 numpy==1.23.5
-protobuf==3.19.6        # works with ML-Agents 1.0.0 on Windows
-onnx==1.12.0            # Windows wheel exists for cp310
-grpcio==1.48.2          # satisfies fork's pin on Windows
+protobuf==3.19.6
+onnx==1.12.0
+grpcio==1.48.2
 cattrs==1.5.0
 h5py==3.8.0
 gym==0.26.2
