@@ -1,0 +1,19 @@
+# Tested on Windows 10/11 x86_64, Python 3.10.x
+numpy==1.23.5
+protobuf==3.19.6        # works with ML-Agents 1.0.0 on Windows
+onnx==1.12.0            # Windows wheel exists for cp310
+grpcio==1.48.2          # satisfies fork's pin on Windows
+cattrs==1.5.0
+h5py==3.8.0
+gym==0.26.2
+pettingzoo==1.15.0
+huggingface_hub==0.34.4
+cloudpickle==2.2.1
+torch==2.4.1
+pandas==2.1.4
+matplotlib==3.10.6
+tensorboard==2.20.0
+scikit-learn==1.7.1
+python-dotenv==1.1.1
+jupyter==1.1.1
+notebook==7.4.5
