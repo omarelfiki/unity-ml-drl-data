@@ -26,14 +26,25 @@ cd unity-ml-drl-data
 * Download and Install Unity Hub and recommended Unity Editor version: 6.2 (6000.2.2f1)
 * Open the ```/unity``` folder as a Unity project.
 
-3. Set up Python enviroment
-```
-cd training
-python3 -m venv venv
-source venv/bin/activate   # Windows: venv\Scripts\activate
-pip install --upgrade pip
-pip install -r requirements.txt
-```
+3. Set up Python enviroment (Python 3.10.12)
+   
+  macOS (ARM-64):
+  ```
+  cd training
+  python3 -m venv venv
+  source venv/bin/activate
+  pip install --upgrade pip
+  pip install -r requirements.arm64.txt
+  ```
+  Windows:
+  ```
+  cd training
+  py -3.10 -m venv venv
+  .\venv\Scripts\Activate.ps1
+  
+  python -m pip install --upgrade pip setuptools wheel
+  pip install -r requirements.windows.txt
+  ```
 
 ### Unity Dependencies
 
