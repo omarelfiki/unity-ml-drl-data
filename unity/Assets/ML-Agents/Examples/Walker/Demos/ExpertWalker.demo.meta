@@ -1,7 +1,10 @@
 fileFormatVersion: 2
-guid: 268593be8b3ba416d899dc4114ddb326
+guid: a4b02e2c382c247919eb63ce72e90a3b
 ScriptedImporter:
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      114: 11400002
+    second: Assets/ML-Agents/Examples/Walker/Demos/ExpertWalker.demo
   externalObjects: {}
   serializedVersion: 2
   userData: ' (Unity.MLAgents.Demonstrations.DemonstrationSummary)'

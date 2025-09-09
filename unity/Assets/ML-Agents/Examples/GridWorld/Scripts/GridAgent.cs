@@ -77,12 +77,8 @@ public class GridAgent : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         Array values = Enum.GetValues(typeof(GridGoal));
-
-        if (m_GoalSensor is object)
-        {
-            int goalNum = (int)CurrentGoal;
-            m_GoalSensor.GetSensor().AddOneHotObservation(goalNum, values.Length);
-        }
+        int goalNum = (int)CurrentGoal;
+        m_GoalSensor.GetSensor().AddOneHotObservation(goalNum, values.Length);
     }
 
     public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
@@ -204,14 +200,7 @@ public class GridAgent : Agent
     {
         area.AreaReset();
         Array values = Enum.GetValues(typeof(GridGoal));
-        if (m_GoalSensor is object)
-        {
-            CurrentGoal = (GridGoal)values.GetValue(UnityEngine.Random.Range(0, values.Length));
-        }
-        else
-        {
-            CurrentGoal = GridGoal.GreenPlus;
-        }
+        CurrentGoal = (GridGoal)values.GetValue(UnityEngine.Random.Range(0, values.Length));
     }
 
     public void FixedUpdate()

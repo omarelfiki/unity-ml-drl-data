@@ -193,7 +193,7 @@ namespace Unity.MLAgentsExamples
         /// <summary>
         /// Sets cells that are matched to the empty cell, and returns the score earned.
         /// </summary>
-        /// <returns>The number of earned points.</returns>
+        /// <returns></returns>
         public int ClearMatchedCells()
         {
             var pointsByType = new[] { BasicCellPoints, SpecialCell1Points, SpecialCell2Points };

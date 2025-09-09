@@ -3,22 +3,21 @@
 using System.Collections;
 using UnityEngine;
 using Unity.MLAgents;
-using Unity.InferenceEngine;
+using Unity.Barracuda;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgentsExamples;
-using Random = UnityEngine.Random;
 
 public class WallJumpAgent : Agent
 {
     // Depending on this value, the wall will have different height
     int m_Configuration;
     // Brain to use when no wall is present
-    public ModelAsset noWallBrain;
+    public NNModel noWallBrain;
     // Brain to use when a jumpable wall is present
-    public ModelAsset smallWallBrain;
+    public NNModel smallWallBrain;
     // Brain to use when a wall requiring a block to jump over is present
-    public ModelAsset bigWallBrain;
+    public NNModel bigWallBrain;
 
     public GameObject ground;
     public GameObject spawnArea;
@@ -52,7 +51,7 @@ public class WallJumpAgent : Agent
 
     public override void Initialize()
     {
-        m_WallJumpSettings = FindFirstObjectByType<WallJumpSettings>();
+        m_WallJumpSettings = FindObjectOfType<WallJumpSettings>();
         m_Configuration = Random.Range(0, 5);
 
         m_AgentRb = GetComponent<Rigidbody>();
@@ -152,8 +151,8 @@ public class WallJumpAgent : Agent
         var velocityTarget = Time.fixedDeltaTime * targetVel * moveToPos;
         if (float.IsNaN(velocityTarget.x) == false)
         {
-            rb.linearVelocity = Vector3.MoveTowards(
-                rb.linearVelocity, velocityTarget, maxVel);
+            rb.velocity = Vector3.MoveTowards(
+                rb.velocity, velocityTarget, maxVel);
         }
     }
 
@@ -300,7 +299,7 @@ public class WallJumpAgent : Agent
     void ResetBlock(Rigidbody blockRb)
     {
         blockRb.transform.position = GetRandomSpawnPos();
-        blockRb.linearVelocity = Vector3.zero;
+        blockRb.velocity = Vector3.zero;
         blockRb.angularVelocity = Vector3.zero;
     }
 
@@ -310,7 +309,7 @@ public class WallJumpAgent : Agent
         transform.localPosition = new Vector3(
             18 * (Random.value - 0.5f), 1, -12);
         m_Configuration = Random.Range(0, 5);
-        m_AgentRb.linearVelocity = default(Vector3);
+        m_AgentRb.velocity = default(Vector3);
     }
 
     void FixedUpdate()

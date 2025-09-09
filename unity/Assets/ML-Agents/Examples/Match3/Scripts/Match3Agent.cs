@@ -76,9 +76,8 @@ namespace Unity.MLAgentsExamples
         private ModelOverrider m_ModelOverrider;
 
         private const float k_RewardMultiplier = 0.01f;
-        protected override void Awake()
+        void Awake()
         {
-            base.Awake();
             Board = GetComponent<Match3Board>();
             m_ModelOverrider = GetComponent<ModelOverrider>();
         }

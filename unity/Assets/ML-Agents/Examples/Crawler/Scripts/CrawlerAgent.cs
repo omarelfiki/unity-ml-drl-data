@@ -38,7 +38,7 @@ public class CrawlerAgent : Agent
     public Transform TargetPrefab; //Target prefab to use in Dynamic envs
     private Transform m_Target; //Target the agent will walk towards during training.
 
-    [Header("Body Parts")][Space(10)] public Transform body;
+    [Header("Body Parts")] [Space(10)] public Transform body;
     public Transform leg0Upper;
     public Transform leg0Lower;
     public Transform leg1Upper;
@@ -260,7 +260,7 @@ public class CrawlerAgent : Agent
         foreach (var item in m_JdController.bodyPartsList)
         {
             numOfRb++;
-            velSum += item.rb.linearVelocity;
+            velSum += item.rb.velocity;
         }
 
         avgVel = velSum / numOfRb;

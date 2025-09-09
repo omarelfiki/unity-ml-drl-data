@@ -16,7 +16,7 @@ public class PushAgentEscape : Agent
     {
         m_GameController = GetComponentInParent<DungeonEscapeEnvController>();
         m_AgentRb = GetComponent<Rigidbody>();
-        m_PushBlockSettings = FindFirstObjectByType<PushBlockSettings>();
+        m_PushBlockSettings = FindObjectOfType<PushBlockSettings>();
         MyKey.SetActive(false);
         IHaveAKey = false;
     }

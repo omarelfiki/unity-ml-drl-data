@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Unity.MLAgents;
@@ -26,19 +25,6 @@ public class BasicController : MonoBehaviour
 
     Agent m_Agent;
 
-    public void Awake()
-    {
-        // Since this example does not inherit from the Agent class, explicit registration
-        // of the RpcCommunicator is required. The RPCCommunicator should only be compiled
-        // for Standalone platforms (i.e. Windows, Linux, or Mac)
-#if UNITY_EDITOR || UNITY_STANDALONE
-        if (!CommunicatorFactory.CommunicatorRegistered)
-        {
-            Debug.Log("Registered Communicator.");
-            CommunicatorFactory.Register<ICommunicator>(RpcCommunicator.Create);
-        }
-#endif
-    }
 
     public void OnEnable()
     {
@@ -80,8 +66,7 @@ public class BasicController : MonoBehaviour
 
     public void ResetAgent()
     {
-        // This is a very inefficient way to reset the scene. Used here for testing. Is likely
-        // causing undisposed tensor issue with Sentis.
+        // This is a very inefficient way to reset the scene. Used here for testing.
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         m_Agent = null; // LoadScene only takes effect at the next Update.
         // We set the Agent to null to avoid using the Agent before the reload

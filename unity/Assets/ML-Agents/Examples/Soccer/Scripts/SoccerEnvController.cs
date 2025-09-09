@@ -20,7 +20,8 @@ public class SoccerEnvController : MonoBehaviour
     /// <summary>
     /// Max Academy steps before this platform resets
     /// </summary>
-    [Tooltip("Max Environment Steps")] public int MaxEnvironmentSteps = 25000;
+    /// <returns></returns>
+    [Header("Max Environment Steps")] public int MaxEnvironmentSteps = 25000;
 
     /// <summary>
     /// The area bounds.
@@ -49,7 +50,7 @@ public class SoccerEnvController : MonoBehaviour
     void Start()
     {
 
-        m_SoccerSettings = FindFirstObjectByType<SoccerSettings>();
+        m_SoccerSettings = FindObjectOfType<SoccerSettings>();
         // Initialize TeamManager
         m_BlueAgentGroup = new SimpleMultiAgentGroup();
         m_PurpleAgentGroup = new SimpleMultiAgentGroup();
@@ -90,7 +91,7 @@ public class SoccerEnvController : MonoBehaviour
         var randomPosZ = Random.Range(-2.5f, 2.5f);
 
         ball.transform.position = m_BallStartingPos + new Vector3(randomPosX, 0f, randomPosZ);
-        ballRb.linearVelocity = Vector3.zero;
+        ballRb.velocity = Vector3.zero;
         ballRb.angularVelocity = Vector3.zero;
 
     }
@@ -99,12 +100,12 @@ public class SoccerEnvController : MonoBehaviour
     {
         if (scoredTeam == Team.Blue)
         {
-            m_BlueAgentGroup.AddGroupReward(1 - (float)m_ResetTimer / MaxEnvironmentSteps);
+            m_BlueAgentGroup.AddGroupReward(1 - m_ResetTimer / MaxEnvironmentSteps);
             m_PurpleAgentGroup.AddGroupReward(-1);
         }
         else
         {
-            m_PurpleAgentGroup.AddGroupReward(1 - (float)m_ResetTimer / MaxEnvironmentSteps);
+            m_PurpleAgentGroup.AddGroupReward(1 - m_ResetTimer / MaxEnvironmentSteps);
             m_BlueAgentGroup.AddGroupReward(-1);
         }
         m_PurpleAgentGroup.EndGroupEpisode();
@@ -127,7 +128,7 @@ public class SoccerEnvController : MonoBehaviour
             var newRot = Quaternion.Euler(0, rot, 0);
             item.Agent.transform.SetPositionAndRotation(newStartPos, newRot);
 
-            item.Rb.linearVelocity = Vector3.zero;
+            item.Rb.velocity = Vector3.zero;
             item.Rb.angularVelocity = Vector3.zero;
         }
 

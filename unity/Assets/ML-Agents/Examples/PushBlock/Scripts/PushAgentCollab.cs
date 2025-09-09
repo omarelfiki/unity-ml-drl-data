@@ -9,10 +9,9 @@ public class PushAgentCollab : Agent
     private PushBlockSettings m_PushBlockSettings;
     private Rigidbody m_AgentRb;  //cached on initialization
 
-    protected override void Awake()
+    void Awake()
     {
-        base.Awake();
-        m_PushBlockSettings = FindFirstObjectByType<PushBlockSettings>();
+        m_PushBlockSettings = FindObjectOfType<PushBlockSettings>();
     }
 
     public override void Initialize()

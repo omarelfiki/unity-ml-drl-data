@@ -50,16 +50,7 @@ public class AgentSoccer : Agent
 
     public override void Initialize()
     {
-        SoccerEnvController envController = GetComponentInParent<SoccerEnvController>();
-        if (envController != null)
-        {
-            m_Existential = 1f / envController.MaxEnvironmentSteps;
-        }
-        else
-        {
-            m_Existential = 1f / MaxStep;
-        }
-
+        m_Existential = 1f / MaxStep;
         m_BehaviorParameters = gameObject.GetComponent<BehaviorParameters>();
         if (m_BehaviorParameters.TeamId == (int)Team.Blue)
         {
@@ -88,7 +79,7 @@ public class AgentSoccer : Agent
             m_LateralSpeed = 0.3f;
             m_ForwardSpeed = 1.0f;
         }
-        m_SoccerSettings = FindFirstObjectByType<SoccerSettings>();
+        m_SoccerSettings = FindObjectOfType<SoccerSettings>();
         agentRb = GetComponent<Rigidbody>();
         agentRb.maxAngularVelocity = 500;
 
