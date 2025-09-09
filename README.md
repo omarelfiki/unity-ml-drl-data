@@ -24,7 +24,7 @@ cd unity-ml-drl-data
 
 **2. Install Unity**
 * Download and Install Unity Hub
-* Install recommended Unity Editor version: 6.2 (6000.2.2f1)
+* Install recommended Unity Editor version: 2023.2.12f1
 * Open the ```/unity``` folder as a Unity project.
 
 **3. Set up Python enviroment (Python 3.10.12)**   
@@ -41,12 +41,8 @@ This will:
 > Ensure you have Python 3.10.12 available (via pyenv, conda, or system Python).
 
 ### Unity Dependencies
-
-This project uses the official Unity ML-Agents package along with Barracuda for inference.
-
+This project uses the official Unity ML-Agents package
 - **ML-Agents (C#)**: Installed from the Unity Package Manager (`com.unity.ml-agents`)
-- **Barracuda**: Installed automatically as a dependency
-
 > No manual action is required — Unity will add these packages when you open the project.
 
 ## Contributors
