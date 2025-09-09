@@ -80,14 +80,6 @@ Once Unity and Python are set up, you can train agents using the provides exampl
 - **Unity side**: ML-Agents 2.0.1 (installed automatically via Unity Package Manager)
 - **Python side**: Dennis Soemers’ ML-Agents fork (see `training/requirements.*.txt`)
 
-## Contributors
-* @omarelfiki
-* @AlexPayn
-* @AshourKaria
-* @Lorenzo-D-Coder2
-* @ntlonggx
-* Alexandru Mihăilă
-
 ## Attributions
 This project includes the official **Unity ML-Agents Examples and corrosponding training configuration files**, sourced from the [Unity ML-Agents GitHub Repository](https://github.com/Unity-Technologies/ml-agents).
 
