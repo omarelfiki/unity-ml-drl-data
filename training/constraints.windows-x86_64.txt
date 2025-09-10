@@ -1,4 +1,4 @@
-# Tested on Windows 10/11 x86_64, Python 3.10.x
+# Tested on Windows 10/11 x86_64, Python 3.10.11
 numpy==1.23.5
 protobuf==3.19.6
 onnx==1.12.0

@@ -1,9 +1,9 @@
 # Third-party deps
 torch>=2.0,<2.5
 numpy==1.23.5
-protobuf==3.19.6
-onnx==1.14.1
-grpcio==1.54.0
+protobuf>=3.19.6,<=3.20.3
+onnx>=1.12.0,<=1.14.1
+grpcio>=1.48.2,<=1.54.0
 cattrs==1.5.0
 h5py==3.8.0
 huggingface_hub>=0.14,<0.35
