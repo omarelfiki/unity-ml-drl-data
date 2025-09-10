@@ -2,7 +2,7 @@
 numpy==1.23.5
 protobuf==3.20.3
 onnx==1.14.1
-grpcio==1.48.2
+grpcio==1.54.0
 cattrs==1.5.0
 h5py==3.8.0
 gym==0.26.2
