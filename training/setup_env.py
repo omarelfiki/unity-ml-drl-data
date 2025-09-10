@@ -35,7 +35,8 @@ def main():
 
     pip = venv_dir / ("Scripts/pip.exe" if system == "Windows" else "bin/pip")
 
-    run(f"{pip} install --upgrade pip setuptools wheel")
+    import sys
+    run(f'"{sys.executable}" -m pip install --upgrade pip setuptools wheel')
 
     run(f"""{pip} install --no-deps \
       "git+https://github.com/DennisSoemers/ml-agents.git@fix-numpy-release-21-branch#egg=mlagents&subdirectory=ml-agents"
