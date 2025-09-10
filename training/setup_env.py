@@ -35,7 +35,6 @@ def main():
 
     pip = venv_dir / ("Scripts/pip.exe" if system == "Windows" else "bin/pip")
 
-    import sys
     run(f'"{sys.executable}" -m pip install --upgrade pip setuptools wheel')
 
     run(f"""{pip} install --no-deps \
