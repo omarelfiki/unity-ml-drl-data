@@ -107,4 +107,5 @@ InitTestScene*.unity*
 # Ignore Python virtual environments
 venv/
 training/venv/
-training/results/
+training/results/unity/Assets/ML-Agents/Timers/
+training/configs_backup/
