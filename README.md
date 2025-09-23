@@ -82,12 +82,13 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 .\venv\Scripts\Activate.ps1
 ```
 **D) Common Windows Fixes**
-```mlagents-learn``` **not found** → Activate venv:
+
+ 1. ```mlagents-learn``` **not found** → Activate venv:
 ```
 cd training
 .\venv\Scripts\Activate.ps1
 ```
-**Multiple Python versions conflict** → Force 3.10.x:
+ 2.  **Multiple Python versions conflict** → Force 3.10.x:
 ```
 py -3.10 -m venv venv
 .\venv\Scripts\Activate.ps1
