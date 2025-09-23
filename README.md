@@ -40,6 +40,13 @@ This will:
 
 > Ensure you have Python 3.10.12 available (via pyenv, conda, or system Python).
 
+### !!! Windows Python Version Note
+Some Windows users reported issues installing **Python 3.10.12** (the version officially required by ML-Agents).  
+If you encounter errors during installation, try instead:
+
+* **Python 3.10.11** → this version is confirmed to work on Windows and is easier to install with the official installer.  
+* After installation, re-run:
+
 ### Starting a Training Run
 Once Unity and Python are set up, you can train agents using the provides example enviroments or your own custom ones
 
