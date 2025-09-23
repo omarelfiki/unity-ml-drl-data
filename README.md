@@ -47,7 +47,7 @@ If you encounter errors during installation, try instead:
 * **Python 3.10.11** → this version is confirmed to work on Windows and is easier to install with the official installer.  
 * After installation, re-run:
 
-### 🪟 Windows Setup Guide (Detailed)
+### Windows Setup Guide (Detailed)
 
 If you’re on Windows and run into issues, follow these platform-specific steps.
 
