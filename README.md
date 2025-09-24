@@ -13,8 +13,8 @@ unity-ml-drl-data/
 ├── data/                  # Collected data and schema definitions
 ├── docs/                  # Documentation, research notes, and reports
 ├── README.md              # This file
-├── CONTRIBUTING.md
-└── SETUP.md
+├── CONTRIBUTING.md        # Guidelines for making contributions
+└── SETUP.md               # In-depth installation steps
 ```
 
 ### Installation Steps
