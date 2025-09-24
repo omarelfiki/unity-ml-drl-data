@@ -1,18 +1,14 @@
 # Contribution Guidelines for unity-ml-drl-data
 This document outlines the guidelines for making contributions to ensure consistency and maintain code quality. Please review it carefully before submitting your work.
-
 ---
 &nbsp;
 
 ## Prerequisites
 All development must be done using the following software versions to ensure project compatibility:
-
 * **Unity Editor:** `2023.2.12f1`
 * **Python:** `3.10.12` (preferred) or `3.10.11`.
 
 &nbsp;
-
-
 ## Contribution Workflow
 This project utilizes the Fork & Pull Request workflow for all code contributions.
 
@@ -48,7 +44,6 @@ git checkout -b feature/implement-ai-heuristic
 Implement your changes and commit them with a clear, descriptive message. It is highly recommended to follow the Conventional Commits specification for commit messages.
 
 Example:
-
 ```bash
 git add .
 git commit -m "feature: Implements new ai heuristic that lowers run time"
@@ -58,7 +53,6 @@ git commit -m "feature: Implements new ai heuristic that lowers run time"
 Push your new branch and its commits to your remote fork on GitHub.
 
 Example:
-
 ```bash
 git push origin feature/implement-ai-heuristic
 ```
@@ -70,11 +64,8 @@ Navigate to your forked repository on GitHub. Initiate a pull request from your 
 
 ## Pull Request Guidelines
 All pull requests must meet the following criteria to be considered for merging:
-
 * **A clear and descriptive title:** Summarize the purpose of the changes concisely.
-  
 * **A detailed summary:** Explain the changes made and the reasoning behind them.
-  
 * **Link to a relevant issue:** If the pull request resolves an existing issue, reference it in the description (e.g., Closes #42).
 
 &nbsp;
@@ -83,11 +74,15 @@ All pull requests must meet the following criteria to be considered for merging:
 All contributions must adhere to the following code standards to maintain project quality and consistency:
 
 * **Meaningful Naming Conventions:** Use clear and descriptive names for all variables, functions, and classes.
-
 * **Consistent Code Formatting:** Adhere to the existing code style and formatting present in the project.
-
 * **Comprehensive Documentation:** Add comments to clarify complex logic or non-obvious code segments.
-
 * **Effective Error Handling:** Implement robust error handling where applicable.
-
+* 
 * **DRY (Don't Repeat Yourself) Principle:** Avoid code duplication by creating reusable functions or classes.
+
+# Git Ignore 
+A ".gitignore" file tells Git which files/folders it should ignore - they won't get committed. 
+This helps with : 
+* Keeping the repository clean
+* Avoids committing unnecessary files
+* Prevents merge conflicts
