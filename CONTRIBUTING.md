@@ -1,6 +1,6 @@
 # Contribution Guidelines for unity-ml-drl-data
+
 This document outlines the guidelines for making contributions to ensure consistency and maintain code quality. Please review it carefully before submitting your work.
----
 &nbsp;
 
 ## Prerequisites
@@ -8,11 +8,8 @@ All development must be done using the following software versions to ensure pro
 * **Unity Editor:** `2023.2.12f1`
 * **Python:** `3.10.12` (preferred) or `3.10.11`.
 
-&nbsp;
 ## Contribution Workflow
 This project utilizes the Fork & Pull Request workflow for all code contributions.
-
-&nbsp;
 
 ### 1. Fork the Repository
 First, create a personal fork of the main repository by clicking the "Fork" button on the project's primary GitHub page.
@@ -60,15 +57,11 @@ git push origin feature/implement-ai-heuristic
 ### 6. Open a Pull Request (PR)
 Navigate to your forked repository on GitHub. Initiate a pull request from your feature branch to the main branch of the original repository.
 
-&nbsp;
-
 ## Pull Request Guidelines
 All pull requests must meet the following criteria to be considered for merging:
 * **A clear and descriptive title:** Summarize the purpose of the changes concisely.
 * **A detailed summary:** Explain the changes made and the reasoning behind them.
 * **Link to a relevant issue:** If the pull request resolves an existing issue, reference it in the description (e.g., Closes #42).
-
-&nbsp;
 
 ## Code Standards
 All contributions must adhere to the following code standards to maintain project quality and consistency:
@@ -77,10 +70,9 @@ All contributions must adhere to the following code standards to maintain projec
 * **Consistent Code Formatting:** Adhere to the existing code style and formatting present in the project.
 * **Comprehensive Documentation:** Add comments to clarify complex logic or non-obvious code segments.
 * **Effective Error Handling:** Implement robust error handling where applicable.
-* 
 * **DRY (Don't Repeat Yourself) Principle:** Avoid code duplication by creating reusable functions or classes.
 
-# Git Ignore 
+## gitignore 
 A ".gitignore" file tells Git which files/folders it should ignore - they won't get committed. 
 This helps with : 
 * Keeping the repository clean
