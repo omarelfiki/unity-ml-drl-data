@@ -15,7 +15,7 @@ unity-ml-drl-data/
 └── README.md              # This file
 ```
 
-###Installation Steps
+### Installation Steps
 See SETUP.md for in-depth installation steps.
 
 ### Starting a Training Run
