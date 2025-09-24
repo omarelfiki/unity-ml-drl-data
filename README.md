@@ -15,6 +15,8 @@ unity-ml-drl-data/
 └── README.md              # This file
 ```
 
+###Installation Steps
+See SETUP.md for in-depth installation steps.
 
 ### Starting a Training Run
 Once Unity and Python are set up, you can train agents using the provides example enviroments or your own custom ones
