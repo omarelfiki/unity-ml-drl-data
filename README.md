@@ -12,7 +12,9 @@ unity-ml-drl-data/
 ├── training/              # Python training scripts, configs, and utilities
 ├── data/                  # Collected data and schema definitions
 ├── docs/                  # Documentation, research notes, and reports
-└── README.md              # This file
+├── README.md              # This file
+├── CONTRIBUTING.md
+└── SETUP.md
 ```
 
 ### Installation Steps
