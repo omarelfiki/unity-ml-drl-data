@@ -3,6 +3,8 @@ import platform
 import subprocess
 import sys
 from pathlib import Path
+import shutil
+import errno
 
 ROOT = Path(__file__).resolve().parent
 
@@ -16,6 +18,21 @@ def run(cmd, **kwargs):
     subprocess.check_call(cmd, shell=True, **kwargs)
 
 def main():
+    reset = "--reset" in sys.argv
+
+    venv_dir = ROOT / "venv"
+
+    if reset and venv_dir.exists():
+        try:
+            shutil.rmtree(venv_dir)
+        except OSError as e:
+            if e.errno == errno.ENOTEMPTY:
+                print("Warning: Could not remove the virtual environment because some files are in use. Please close any programs using the venv and try again.")
+                sys.exit(1)
+            else:
+                raise
+        print("Current venv deleted. Reconstructing with latest dependencies...")
+
     system = platform.system()
     machine = platform.machine()
     constraints_file = CONSTRAINTS_MAP.get((system, machine))
@@ -27,7 +44,6 @@ def main():
         constraints_path = ROOT / constraints_file
         print(f"Using constraints: {constraints_path}")
 
-    venv_dir = ROOT / "venv"
     python = sys.executable
 
     if not venv_dir.exists():
@@ -54,9 +70,9 @@ def main():
     print("\n✅ Environment setup complete!")
     print(f"To activate the venv, run:")
     if system == "Windows":
-        print(rf"   {venv_dir}\Scripts\Activate.ps1")
+        print(rf"{venv_dir}\Scripts\Activate.ps1")
     else:
-        print(f"   source {venv_dir}/bin/activate")
+        print(f"source {venv_dir}/bin/activate")
 
 if __name__ == "__main__":
     main()
