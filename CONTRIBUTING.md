@@ -78,3 +78,14 @@ This helps with :
 * Keeping the repository clean
 * Avoids committing unnecessary files
 * Prevents merge conflicts
+
+
+## TensorBoard Naming convention 
+Every group member must follow this naming convention in TensorBoard when they run a training run. You are able to change the name of the file in the configurations file
+
+X_Y(_A)
+
+* X = Your 2 initials
+* Y = the date you make the training run
+* A = 
+
