@@ -1,0 +1,70 @@
+----------------------------------------
+ Hardware Specifications Group 6 AI/ML
+----------------------------------------
+
+----------------------------------------
+ Omar Elfiki				
+----------------------------------------
+ Run_id: OE
+ Machine: arm64
+ CPU: Apple M3 (arm)
+ Cores: 8
+ Threads: 8
+ RAM (GB): 17.18
+ OS: macOS-26.0.1-arm64-arm-64bit-Mach-O
+ Python: 3.10.12
+----------------------------------------
+ Ashour Kariakous
+----------------------------------------
+ Run_id: AK
+ Machine: arm64
+ CPU: Apple M2 (arm)
+ Cores: 8
+ Threads: 8
+ RAM (GB): 8.59
+ OS: macOS-26.0-arm64-arm-64bit
+ Python: 3.10.12
+----------------------------------------
+ Alex Payn
+----------------------------------------
+ Run_id: AP
+ Machine: AMD64
+ CPU: Intel64 Family 6 Model 142 Stepping 12
+ Cores: 2
+ Threads: 4
+ RAM (GB): 8.42
+ OS: Windows-10-10.0.19045-SP0
+ Python: 3.10.11
+----------------------------------------
+ Lorenzo Franca
+----------------------------------------
+ Run_id: LF
+ Machine: AMD64
+ CPU: Intel64 Family 6 Model 154 Stepping 4
+ Cores: 10
+ Threads: 12
+ RAM (GB): 16.89
+ OS: Windows-10-10.0.26100-SP0
+ Python: 3.10.11
+----------------------------------------
+ Long Nguyen
+----------------------------------------
+ Run_id: LN
+ Machine: AMD64
+ CPU: AMD64 Family 23 Model 96 Stepping 1
+ Cores: 6
+ Threads: 12
+ RAM (GB): 16.51
+ OS: Windows-10-10.0.26100-SP0
+ Python: 3.10.12
+----------------------------------------
+ Alex Mikhail
+----------------------------------------
+ Run_id: AM
+ Machine: AMD64
+ CPU: Intel64 Family 6 Model 151 Stepping 2
+ Cores: 8
+ Threads: 12
+ RAM (GB): 12.58
+ OS: Windows-10-10.0.26100-SP0
+ Python: 3.10.11
