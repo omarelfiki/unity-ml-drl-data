@@ -81,11 +81,15 @@ This helps with :
 
 
 ## TensorBoard Naming convention 
-Every group member must follow this naming convention in TensorBoard when they run a training run. You are able to change the name of the file in the configurations file
+Every group member must follow this naming convention in TensorBoard when they run a training run. You are able to change the name of the file in the configurations file.
 
 X_Y(_A)
 
-* X = Your 2 initials
-* Y = the date you make the training run
-* A = 
+* X = Your initials (eg. LF)
+* Y = the date you make the training run (eg. 011025 (01/10/2025))
+* A = The number of the training run on that day (eg. 1 (first run of the day on that specific scene))
+
+Example of file name: **LF_100125_1**
+
+The file on tensorboard will look like the following, LF_100125_1/3Dball (/3Dball will be filled out automatically dependning on the training scene you choose)
 
