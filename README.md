@@ -77,6 +77,8 @@ You can monitor various metrics such as reward, loss, and other statistics logge
 
 To stop TensorBoard, simply return to your terminal and press `Ctrl+C`.
 
+For the training run naming convention, please see CONTRIBUTING.md.
+
      
 ### Dependencies
 **Unity side**: ML-Agents 2.0.1 (installed automatically via Unity Package Manager)
