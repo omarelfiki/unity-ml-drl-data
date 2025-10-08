@@ -9,6 +9,8 @@ import glob
 import os
 import yaml
 import sys
+import csv
+import json
 
 # Usage
 # python train_model.py --config [config.yaml] --run-id [naming_convention] (optional: --num-steps [int])
@@ -238,6 +240,35 @@ def main():
         print(f"| {key.ljust(key_width)} | {value.ljust(val_width)} |")
 
     print("=" * (key_width + val_width + 7))
+
+    # Save results to CSV and JSON in 'data' folder outside 'training' directory
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    data_dir = os.path.join(project_root, "data")
+    os.makedirs(data_dir, exist_ok=True)
+
+    csv_file = os.path.join(data_dir, "combined_results.csv")
+    json_file = os.path.join(data_dir, "combined_results.json")
+
+    # Write or append to CSV
+    file_exists = os.path.isfile(csv_file)
+    with open(csv_file, mode='a', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=combined_data.keys())
+        if not file_exists:
+            writer.writeheader()
+        writer.writerow(combined_data)
+
+    # Write or append to JSON
+    json_data = []
+    if os.path.isfile(json_file):
+        try:
+            with open(json_file, 'r') as jf:
+                json_data = json.load(jf)
+        except Exception:
+            json_data = []
+
+    json_data.append(combined_data)
+    with open(json_file, 'w') as jf:
+        json.dump(json_data, jf, indent=4)
 
 if __name__ == "__main__":
     main()
