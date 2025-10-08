@@ -13,7 +13,7 @@ an agent to reach a performance threshold using initial configuration and early 
 | **Column**                 | **Type** | **Description**                                                 |
 |----------------------------|----------|-----------------------------------------------------------------|
 | `run_id`                   | string   | Unique identifier for a run                                     |
-| `environment_name`         | string   | Unity environment (e.g., `3DBall`, `Basic`, `Sorter`)           |
+| `behavior`                 | string   | Unity environment (e.g., `3DBall`, `Basic`, `Sorter`)           |
 | `seed`                     | int      | Random seed for reproducibility (`-1` indicates default/random) |
 | `num_agents`               | int      | Number of simultaneous agents/instances                         |
 | `algorithm`                | string   | DRL algorithm (e.g., `PPO`)                                     |
