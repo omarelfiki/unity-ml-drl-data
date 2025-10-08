@@ -80,7 +80,7 @@ This helps with :
 * Prevents merge conflicts
 
 
-## TensorBoard Naming convention 
+## Training Runs Naming convention 
 Every group member must follow this naming convention in TensorBoard when they run a training run. You are able to change the name of the file in the configurations file.
 
 X_Y_E(_A)
