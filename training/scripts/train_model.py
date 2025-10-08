@@ -1,17 +1,74 @@
+from tensorboard.backend.event_processing import event_accumulator
 import psutil
 import subprocess
 import threading
 import time
 import argparse
-from datetime import datetime
+import numpy as np
+import glob
+import os
+import yaml
+import sys
+
+# Usage
+# python train_model.py --config [config.yaml] --run-id [naming_convention] (optional: --num-steps [int])
+
+TAGS = {
+    "Environment/Cumulative Reward": "Mean Policy Reward",
+    "Losses/Policy Loss": "Mean Policy Loss",
+    "Losses/Value Loss": "Mean Value Loss",
+    "Policy/Entropy": "Mean Entropy"
+}
+
+N_STEPS = 1000 # Default window size after first data point
+
+def extract_metrics(run_id, log_dir, n_steps):
+    """Extract mean metrics over the first N_STEPS after the first logged step."""
+    # Locate TensorBoard event file
+    event_files = glob.glob(
+        os.path.join(log_dir, run_id, "**", "events.out.tfevents.*"),
+        recursive=True
+    )
+    if not event_files:
+        print(f"[WARNING] No TensorBoard logs found for run '{run_id}'")
+        return None
+
+    ea = event_accumulator.EventAccumulator(event_files[0])
+    ea.Reload()
+
+    metrics = {"Run ID": run_id}
+
+    for tag, label in TAGS.items():
+        try:
+            events = ea.Scalars(tag)
+        except KeyError:
+            print(f"[WARNING] Missing tag '{tag}' in '{run_id}'")
+            metrics[label] = None
+            continue
+
+        if not events:
+            metrics[label] = None
+            continue
+
+        steps = np.array([e.step for e in events])
+        values = np.array([e.value for e in events])
+
+        # Determine first available step and define window
+        first_step = steps.min()
+        window_limit = first_step + n_steps
+        mask = (steps >= first_step) & (steps <= window_limit)
+
+        if np.any(mask):
+            metrics[label] = float(values[mask].mean())
+            metrics[f"{label} (start step)"] = int(first_step)
+        else:
+            metrics[label] = None
+            metrics[f"{label} (start step)"] = int(first_step)
+
+    return metrics
 
 def monitor_system(stop_event, interval=1):
     """Monitor CPU and RAM usage while training runs."""
-    print("\nMonitoring system usage... (will stop when training ends)\n")
-    print(f"{'Timestamp':<25} {'CPU %':<8} {'RAM Used (GB)':<15} {'RAM %':<8} "
-          f"{'Mean CPU %':<10} {'Mean RAM %':<10}")
-    print("-" * 85)
-
     cpu_readings = []
     ram_readings = []
     start_time = time.time()
@@ -19,72 +76,168 @@ def monitor_system(stop_event, interval=1):
     while not stop_event.is_set():
         cpu_percent = psutil.cpu_percent(interval=interval)
         ram = psutil.virtual_memory()
-        ram_used_gb = ram.used / (1024 ** 3)
-        ram_percent = ram.percent
-
         cpu_readings.append(cpu_percent)
-        ram_readings.append(ram_percent)
-
-        mean_cpu = sum(cpu_readings) / len(cpu_readings)
-        mean_ram = sum(ram_readings) / len(ram_readings)
-
-        print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S'): <25} "
-              f"{cpu_percent: <8.1f} {ram_used_gb: <15.2f} {ram_percent: <8.1f} "
-              f"{mean_cpu: <10.1f} {mean_ram: <10.1f}")
+        ram_readings.append(ram.percent)
 
     total_time = time.time() - start_time
     mean_cpu = sum(cpu_readings) / len(cpu_readings)
     mean_ram = sum(ram_readings) / len(ram_readings)
     return mean_cpu, mean_ram, total_time
 
-
 def main():
-    # --- Parse CLI arguments ---
     parser = argparse.ArgumentParser(description="Run ML-Agents training with system monitoring.")
     parser.add_argument("--config", required=True, help="Path to the ML-Agents YAML config file")
     parser.add_argument("--run-id", required=True, help="Run ID for the training session")
+    parser.add_argument("--num-steps", type=int, default=N_STEPS, help="Number of steps to monitor")
     args = parser.parse_args()
 
     config_file = args.config
     run_id = args.run_id
+    num_steps = args.num_steps
+
+    config_data = {}
+    try:
+        with open(config_file, 'r') as f:
+            config_data = yaml.safe_load(f)
+    except Exception as e:
+        print(f"[ERROR] Could not read config file '{config_file}': {e}")
 
     print(f"\n Starting ML-Agents training")
     print(f"   Config file: {config_file}")
     print(f"   Run ID:      {run_id}")
 
-    stop_event = threading.Event()
+    # Define container for results from monitor thread
     results = {}
-
-    def monitor_wrapper():
-        results["metrics"] = monitor_system(stop_event)
-
-    monitor_thread = threading.Thread(target=monitor_wrapper)
-    monitor_thread.start()
 
     start_time = time.time()
 
-    # --- Launch ML-Agents training ---
-    process = subprocess.Popen(
-        ["mlagents-learn", config_file, "--run-id", run_id, "--force"],
-        stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
-    )
+    stop_event = threading.Event()
+    process = None
+    monitor_thread = None
 
-    # Stream ML-Agents output
-    for line in iter(process.stdout.readline, ""):
-        print(line, end="")
-    process.wait()
+    try:
+        # --- Launch ML-Agents training ---
+        process = subprocess.Popen(
+            ["mlagents-learn", config_file, "--run-id", run_id, "--force"],
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+        )
+
+        # Start system monitoring thread after process is launched
+        def monitor_wrapper():
+            results["metrics"] = monitor_system(stop_event)
+        monitor_thread = threading.Thread(target=monitor_wrapper)
+        monitor_thread.start()
+
+        # Stream ML-Agents output
+        for line in iter(process.stdout.readline, ""):
+            print(line, end="")
+        process.wait()
+
+    except KeyboardInterrupt:
+        print("\n[INFO] Training interrupted by user. Shutting down gracefully...")
+        stop_event.set()
+        if process:
+            process.terminate()
+            try:
+                process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                process.kill()
+        if monitor_thread:
+            monitor_thread.join()
+        print("[INFO] Shutdown complete.")
+        sys.exit(0)
 
     stop_event.set()
-    monitor_thread.join()
+    if monitor_thread:
+        monitor_thread.join()
 
     total_time = time.time() - start_time
     mean_cpu, mean_ram, _ = results["metrics"]
 
-    print("\nTraining complete.")
-    print(f"Total wall-clock time: {total_time/60:.2f} minutes ({total_time:.0f} seconds)")
-    print(f"Average CPU usage: {mean_cpu:.1f}%")
-    print(f"Average RAM usage: {mean_ram:.1f}%")
+    # Analyze training results from tensorboard logs
+    log_dir = os.path.join(os.path.dirname(__file__), "..", "results")
+    log_dir = os.path.abspath(log_dir)
+    metrics = extract_metrics(run_id, log_dir, num_steps)
+    environment = os.path.splitext(os.path.basename(config_file))[0]
 
+    # Load generated configuration files after training
+    generated_config = {}
+    generated_config_path = os.path.join(log_dir, run_id, "configuration.yaml")
+    if os.path.exists(generated_config_path):
+        try:
+            with open(generated_config_path, "r") as f:
+                generated_config = yaml.safe_load(f)
+                print("[INFO] Loaded generated config file:")
+        except Exception as e:
+            print(f"[WARNING] Could not read generated config file '{generated_config_path}': {e}")
+
+    behavior_name = next(iter(generated_config.get("behaviors", {})), None)
+
+    # Helper to get parameter, prioritizing generated_config over config_data
+    def get_param(param, default="N/A"):
+        # param: tuple of keys to traverse, e.g. ('behaviors', environment, 'trainer_type')
+        d = generated_config
+        for k in param:
+            if isinstance(d, dict) and k in d:
+                d = d[k]
+            else:
+                d = None
+                break
+        if d is not None:
+            return d
+        # fallback to original config files if not found in generated_config
+        d = config_data
+        for k in param:
+            if isinstance(d, dict) and k in d:
+                d = d[k]
+            else:
+                return default
+        return d
+
+    # Get seed value from generated_config if available
+    seed = get_param(('env_settings', 'seed'), "N/A")
+
+    combined_data = {
+        "Run ID": run_id,
+        "Environment": behavior_name,
+        "Seed": str(seed),
+        "Number of Agents": "Find on Unity",
+        "Algorithm": f"{get_param(('behaviors', behavior_name, 'trainer_type'))}",
+        "Steps": f"{get_param(('behaviors', behavior_name, 'max_steps'))}",
+        "Batch Size": f"{get_param(('behaviors', behavior_name, 'hyperparameters', 'batch_size'))}",
+        "Buffer Size": f"{get_param(('behaviors', behavior_name, 'hyperparameters', 'buffer_size'))}",
+        "Learning Rate": f"{get_param(('behaviors', behavior_name, 'hyperparameters', 'learning_rate'))}",
+        "Epochs": f"{get_param(('behaviors', behavior_name, 'hyperparameters', 'num_epoch'))}",
+        "Total Time (s)": f"{total_time:.0f}",
+        "Average CPU (%)": f"{mean_cpu:.1f}",
+        "Average RAM (%)": f"{mean_ram:.1f}",
+    }
+    if metrics:
+        for key, value in metrics.items():
+            if key == "Run ID":
+                continue
+            if value is None:
+                display_value = "(no data)"
+            elif isinstance(value, int):
+                display_value = str(value)
+            elif isinstance(value, float):
+                display_value = f"{value:.4f}"
+            else:
+                display_value = str(value)
+            # Update value if key exists, else add new
+            combined_data[key] = display_value
+
+    key_width = max(len(k) for k in combined_data.keys())
+    val_width = max(len(v) for v in combined_data.values())
+
+    print("\n" + "=" * (key_width + val_width + 7))
+    print(f"| {'Metric'.ljust(key_width)} | {'Value'.ljust(val_width)} |")
+    print("=" * (key_width + val_width + 7))
+
+    for key, value in combined_data.items():
+        print(f"| {key.ljust(key_width)} | {value.ljust(val_width)} |")
+
+    print("=" * (key_width + val_width + 7))
 
 if __name__ == "__main__":
     main()
