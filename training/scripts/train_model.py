@@ -7,7 +7,7 @@ from datetime import datetime
 
 def monitor_system(stop_event, interval=1):
     """Monitor CPU and RAM usage while training runs."""
-    print("\n🖥️ Monitoring system usage... (will stop when training ends)\n")
+    print("\nMonitoring system usage... (will stop when training ends)\n")
     print(f"{'Timestamp':<25} {'CPU %':<8} {'RAM Used (GB)':<15} {'RAM %':<8} "
           f"{'Mean CPU %':<10} {'Mean RAM %':<10}")
     print("-" * 85)
@@ -48,7 +48,7 @@ def main():
     config_file = args.config
     run_id = args.run_id
 
-    print(f"\n🚀 Starting ML-Agents training")
+    print(f"\n Starting ML-Agents training")
     print(f"   Config file: {config_file}")
     print(f"   Run ID:      {run_id}")
 
@@ -80,10 +80,10 @@ def main():
     total_time = time.time() - start_time
     mean_cpu, mean_ram, _ = results["metrics"]
 
-    print("\n✅ Training complete.")
-    print(f"⏱️  Total wall-clock time: {total_time/60:.2f} minutes ({total_time:.0f} seconds)")
-    print(f"📊 Average CPU usage: {mean_cpu:.1f}%")
-    print(f"📊 Average RAM usage: {mean_ram:.1f}%")
+    print("\nTraining complete.")
+    print(f"Total wall-clock time: {total_time/60:.2f} minutes ({total_time:.0f} seconds)")
+    print(f"Average CPU usage: {mean_cpu:.1f}%")
+    print(f"Average RAM usage: {mean_ram:.1f}%")
 
 
 if __name__ == "__main__":
