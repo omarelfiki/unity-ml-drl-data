@@ -32,7 +32,7 @@ Example: ```Assets/ML-Agents/Examples/3DBall/Scenes/3DBall.unity```
 
 Inside your virtual enviroment created earlier, run from root:
 
-      python training/scripts/train_model.py --config configs/3DBall.yaml --run-id ball_test_001
+      python training/scripts/train_model.py --config training/configs_official/3DBall.yaml --run-id ball_test_001
      
 You should see output like this:
 
