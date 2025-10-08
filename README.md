@@ -30,9 +30,9 @@ Example: ```Assets/ML-Agents/Examples/3DBall/Scenes/3DBall.unity```
 
 **Launch Training from Python**
 
-Inside your virtual enviroment created earlier, run from root:
+Inside your virtual enviroment created earlier, run from ```/training```:
 
-      python training/scripts/train_model.py --config training/configs_official/3DBall.yaml --run-id ball_test_001
+      python scripts/train_model.py --config configs_official/3DBall.yaml --run-id ball_test_001
      
 You should see output like this:
 
