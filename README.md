@@ -36,8 +36,15 @@ Inside your virtual enviroment created earlier, run from root:
      
 You should see output like this:
 
-     [INFO] Listening on port 5004. Start training by pressing the Play button in the Unity Editor.
-     [INFO] Connected to Unity environment with package version 2.0.1 and communication version 1.5.0
+     Starting ML-Agents training
+      Config file: configs/3DBall.yaml
+      Run ID:      ball_test_001
+      Monitoring system usage... (will stop when training ends)
+      ...
+      Training complete.
+      Total wall-clock time: 9.23 minutes (554 seconds)
+      Average CPU usage: 72.8%
+      Average RAM usage: 63.4%
 
 
    > If you have exited your virtual environment you can access it again by running:
