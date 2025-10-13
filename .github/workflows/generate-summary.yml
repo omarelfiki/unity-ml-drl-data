@@ -1,0 +1,33 @@
+name: Generate Summary Report
+
+on:
+  push:
+    paths:
+      - 'data/combined_results.csv'
+      - 'data/combined_results.json'
+
+jobs:
+  build-summary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install pandas tabulate matplotlib
+
+      - name: Generate summary report
+        run: python training/scripts/generate_summary.py
+
+      - name: Commit summary report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/summary_report.md
+          git commit -m "Auto-update summary report [skip ci]" || echo "No changes to commit"
+          git push
