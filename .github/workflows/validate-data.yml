@@ -1,0 +1,25 @@
+name: Validate Data Format
+
+on:
+  push:
+    paths:
+      - 'data/combined_results.csv'
+      - 'data/combined_results.json'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install pandas jsonschema
+
+      - name: Validate CSV and JSON
+        run: python training/scripts/validate_results.py
