@@ -53,7 +53,7 @@ public class PushAgentBasic : Agent
 
     void Awake()
     {
-        m_PushBlockSettings = FindObjectOfType<PushBlockSettings>();
+        m_PushBlockSettings = FindFirstObjectByType<PushBlockSettings>();
     }
 
     public override void Initialize()
@@ -224,6 +224,9 @@ public class PushAgentBasic : Agent
         transform.position = GetRandomSpawnPos();
         m_AgentRb.velocity = Vector3.zero;
         m_AgentRb.angularVelocity = Vector3.zero;
+
+        int agentCount = FindObjectsByType<PushAgentBasic>(FindObjectsSortMode.None).Length;
+        Academy.Instance.StatsRecorder.Add("Environment/NumAgents", agentCount);
 
         SetResetParameters();
     }

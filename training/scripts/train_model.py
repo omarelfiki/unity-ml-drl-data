@@ -19,7 +19,8 @@ TAGS = {
     "Environment/Cumulative Reward": "Mean Policy Reward",
     "Losses/Policy Loss": "Mean Policy Loss",
     "Losses/Value Loss": "Mean Value Loss",
-    "Policy/Entropy": "Mean Entropy"
+    "Policy/Entropy": "Mean Entropy",
+    "Environment/NumAgents": "Number of Agents"
 }
 
 N_STEPS = 1000 # Default window size after first data point
@@ -62,7 +63,10 @@ def extract_metrics(run_id, log_dir, n_steps):
         mask = (steps >= first_step) & (steps <= window_limit)
 
         metrics[label] = float(values[mask].mean()) if np.any(mask) else None
-        metrics[f"{label} (start step)"] = int(first_step)
+        if label == "Number of Agents":
+            continue
+        else:
+            metrics[f"{label} (start step)"] = int(first_step)
 
     # Compute step interval used for computing running means
     all_steps = []
@@ -218,7 +222,6 @@ def main():
         "Run ID": run_id,
         "Environment": behavior_name,
         "Seed": str(seed),
-        "Number of Agents": "Find on Unity",
         "Algorithm": f"{get_param(('behaviors', behavior_name, 'trainer_type'))}",
         "Steps": f"{get_param(('behaviors', behavior_name, 'max_steps'))}",
         "Batch Size": f"{get_param(('behaviors', behavior_name, 'hyperparameters', 'batch_size'))}",

@@ -91,6 +91,9 @@ namespace Unity.MLAgentsExamples
             m_CurrentState = State.FindMatches;
             m_TimeUntilMove = MoveTime;
             m_MovesMade = 0;
+
+            int agentCount = FindObjectsByType<Match3Agent>(FindObjectsSortMode.None).Length;
+            Academy.Instance.StatsRecorder.Add("Environment/NumAgents", agentCount);
         }
 
         private void FixedUpdate()

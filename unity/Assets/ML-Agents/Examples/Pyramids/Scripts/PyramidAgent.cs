@@ -102,6 +102,9 @@ public class PyramidAgent : Agent
         m_MyArea.CreateStonePyramid(1, items[6]);
         m_MyArea.CreateStonePyramid(1, items[7]);
         m_MyArea.CreateStonePyramid(1, items[8]);
+
+        int agentCount = FindObjectsByType<PyramidAgent>(FindObjectsSortMode.None).Length;
+        Academy.Instance.StatsRecorder.Add("Environment/NumAgents", agentCount);
     }
 
     void OnCollisionEnter(Collision collision)

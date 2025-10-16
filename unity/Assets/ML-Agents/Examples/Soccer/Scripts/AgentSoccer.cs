@@ -79,7 +79,7 @@ public class AgentSoccer : Agent
             m_LateralSpeed = 0.3f;
             m_ForwardSpeed = 1.0f;
         }
-        m_SoccerSettings = FindObjectOfType<SoccerSettings>();
+        m_SoccerSettings = FindFirstObjectByType<SoccerSettings>();
         agentRb = GetComponent<Rigidbody>();
         agentRb.maxAngularVelocity = 500;
 
@@ -203,6 +203,8 @@ public class AgentSoccer : Agent
     public override void OnEpisodeBegin()
     {
         m_BallTouch = m_ResetParams.GetWithDefault("ball_touch", 0);
+        int agentCount = FindObjectsByType<AgentSoccer>(FindObjectsSortMode.None).Length;
+        Academy.Instance.StatsRecorder.Add("Environment/NumAgents", agentCount);
     }
 
 }

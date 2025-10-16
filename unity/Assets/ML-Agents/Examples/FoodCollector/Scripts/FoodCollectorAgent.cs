@@ -40,7 +40,7 @@ public class FoodCollectorAgent : Agent
     {
         m_AgentRb = GetComponent<Rigidbody>();
         m_MyArea = area.GetComponent<FoodCollectorArea>();
-        m_FoodCollecterSettings = FindObjectOfType<FoodCollectorSettings>();
+        m_FoodCollecterSettings = FindFirstObjectByType<FoodCollectorSettings>();
         m_ResetParams = Academy.Instance.EnvironmentParameters;
         SetResetParameters();
     }
@@ -224,6 +224,9 @@ public class FoodCollectorAgent : Agent
             2f, Random.Range(-m_MyArea.range, m_MyArea.range))
             + area.transform.position;
         transform.rotation = Quaternion.Euler(new Vector3(0f, Random.Range(0, 360)));
+
+        int agentCount = FindObjectsByType<FoodCollectorAgent>(FindObjectsSortMode.None).Length;
+        Academy.Instance.StatsRecorder.Add("Environment/NumAgents", agentCount);
 
         SetResetParameters();
     }

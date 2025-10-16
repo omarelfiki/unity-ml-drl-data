@@ -22,7 +22,7 @@ public class HallwayAgent : Agent
 
     public override void Initialize()
     {
-        m_HallwaySettings = FindObjectOfType<HallwaySettings>();
+        m_HallwaySettings = FindFirstObjectByType<HallwaySettings>();
         m_AgentRb = GetComponent<Rigidbody>();
         m_GroundRenderer = ground.GetComponent<Renderer>();
         m_GroundMaterial = m_GroundRenderer.material;
@@ -161,5 +161,8 @@ public class HallwayAgent : Agent
         }
         m_statsRecorder.Add("Goal/Correct", 0, StatAggregationMethod.Sum);
         m_statsRecorder.Add("Goal/Wrong", 0, StatAggregationMethod.Sum);
+
+        int agentCount = FindObjectsByType<HallwayAgent>(FindObjectsSortMode.None).Length;
+        m_statsRecorder.Add("Environment/NumAgents", agentCount);
     }
 }

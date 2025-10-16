@@ -50,7 +50,7 @@ public class SoccerEnvController : MonoBehaviour
     void Start()
     {
 
-        m_SoccerSettings = FindObjectOfType<SoccerSettings>();
+        m_SoccerSettings = FindFirstObjectByType<SoccerSettings>();
         // Initialize TeamManager
         m_BlueAgentGroup = new SimpleMultiAgentGroup();
         m_PurpleAgentGroup = new SimpleMultiAgentGroup();

@@ -51,7 +51,7 @@ public class WallJumpAgent : Agent
 
     public override void Initialize()
     {
-        m_WallJumpSettings = FindObjectOfType<WallJumpSettings>();
+        m_WallJumpSettings = FindFirstObjectByType<WallJumpSettings>();
         m_Configuration = Random.Range(0, 5);
 
         m_AgentRb = GetComponent<Rigidbody>();
@@ -310,6 +310,9 @@ public class WallJumpAgent : Agent
             18 * (Random.value - 0.5f), 1, -12);
         m_Configuration = Random.Range(0, 5);
         m_AgentRb.velocity = default(Vector3);
+
+        int agentCount = FindObjectsByType<WallJumpAgent>(FindObjectsSortMode.None).Length;
+        Academy.Instance.StatsRecorder.Add("Environment/NumAgents", agentCount);
     }
 
     void FixedUpdate()

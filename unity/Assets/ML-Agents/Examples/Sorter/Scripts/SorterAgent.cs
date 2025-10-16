@@ -55,6 +55,9 @@ public class SorterAgent : Agent
         transform.position = m_StartingPos;
         m_AgentRb.velocity = Vector3.zero;
         m_AgentRb.angularVelocity = Vector3.zero;
+
+        int agentCount = FindObjectsByType<SorterAgent>(FindObjectsSortMode.None).Length;
+        Academy.Instance.StatsRecorder.Add("Environment/NumAgents", agentCount);
     }
 
 

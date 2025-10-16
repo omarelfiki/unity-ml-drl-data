@@ -80,7 +80,7 @@ public class PushBlockEnvController : MonoBehaviour
         m_GroundRenderer = ground.GetComponent<Renderer>();
         // Starting material
         m_GroundMaterial = m_GroundRenderer.material;
-        m_PushBlockSettings = FindObjectOfType<PushBlockSettings>();
+        m_PushBlockSettings = FindFirstObjectByType<PushBlockSettings>();
         // Initialize Blocks
         foreach (var item in BlocksList)
         {

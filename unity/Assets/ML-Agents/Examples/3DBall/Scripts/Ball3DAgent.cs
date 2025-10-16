@@ -69,6 +69,10 @@ public class Ball3DAgent : Agent
         m_BallRb.velocity = new Vector3(0f, 0f, 0f);
         ball.transform.position = new Vector3(Random.Range(-1.5f, 1.5f), 4f, Random.Range(-1.5f, 1.5f))
             + gameObject.transform.position;
+
+        int agentCount = FindObjectsByType<Ball3DAgent>(FindObjectsSortMode.None).Length;
+        Academy.Instance.StatsRecorder.Add("Environment/NumAgents", agentCount);
+
         //Reset the parameters when the Agent is reset.
         SetResetParameters();
     }

@@ -74,6 +74,9 @@ public class Ball3DHardAgent : Agent
         m_BallRb.velocity = new Vector3(0f, 0f, 0f);
         ball.transform.position = new Vector3(Random.Range(-1.5f, 1.5f), 4f, Random.Range(-1.5f, 1.5f))
             + gameObject.transform.position;
+
+        int agentCount = FindObjectsByType<Ball3DHardAgent>(FindObjectsSortMode.None).Length;
+        Academy.Instance.StatsRecorder.Add("Environment/NumAgents", agentCount);
     }
 
     public void SetBall()

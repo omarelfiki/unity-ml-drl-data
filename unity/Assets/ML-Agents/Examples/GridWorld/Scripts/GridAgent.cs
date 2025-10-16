@@ -201,6 +201,9 @@ public class GridAgent : Agent
         area.AreaReset();
         Array values = Enum.GetValues(typeof(GridGoal));
         CurrentGoal = (GridGoal)values.GetValue(UnityEngine.Random.Range(0, values.Length));
+
+        int agentCount = FindObjectsByType<GridAgent>(FindObjectsSortMode.None).Length;
+        Academy.Instance.StatsRecorder.Add("Environment/NumAgents", agentCount);
     }
 
     public void FixedUpdate()

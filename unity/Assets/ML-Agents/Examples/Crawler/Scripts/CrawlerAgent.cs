@@ -114,6 +114,9 @@ public class CrawlerAgent : Agent
 
         //Set our goal walking speed
         TargetWalkingSpeed = Random.Range(0.1f, m_maxWalkingSpeed);
+
+        int agentCount = FindObjectsByType<CrawlerAgent>(FindObjectsSortMode.None).Length;
+        Academy.Instance.StatsRecorder.Add("Environment/NumAgents", agentCount);
     }
 
     /// <summary>

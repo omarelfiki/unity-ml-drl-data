@@ -108,6 +108,9 @@ public class WalkerAgent : Agent
         MTargetWalkingSpeed =
             randomizeWalkSpeedEachEpisode ? Random.Range(0.1f, m_maxWalkingSpeed) : MTargetWalkingSpeed;
 
+        int agentCount = FindObjectsByType<WalkerAgent>(FindObjectsSortMode.None).Length;
+        Academy.Instance.StatsRecorder.Add("Environment/NumAgents", agentCount);
+
         SetResetParameters();
     }
 

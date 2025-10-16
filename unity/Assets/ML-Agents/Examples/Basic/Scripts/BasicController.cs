@@ -33,6 +33,7 @@ public class BasicController : MonoBehaviour
         transform.position = new Vector3(position - 10f, 0f, 0f);
         smallGoal.transform.position = new Vector3(k_SmallGoalPosition - 10f, 0f, 0f);
         largeGoal.transform.position = new Vector3(k_LargeGoalPosition - 10f, 0f, 0f);
+        Academy.Instance.StatsRecorder.Add("Environment/NumAgents", 1);
     }
 
     /// <summary>

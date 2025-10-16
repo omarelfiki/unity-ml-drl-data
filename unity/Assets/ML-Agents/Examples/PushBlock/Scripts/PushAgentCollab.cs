@@ -11,7 +11,7 @@ public class PushAgentCollab : Agent
 
     void Awake()
     {
-        m_PushBlockSettings = FindObjectOfType<PushBlockSettings>();
+        m_PushBlockSettings = FindFirstObjectByType<PushBlockSettings>();
     }
 
     public override void Initialize()
@@ -85,5 +85,12 @@ public class PushAgentCollab : Agent
         {
             discreteActionsOut[0] = 2;
         }
+    }
+
+    public override void OnEpisodeBegin()
+    {
+        int agentCount = FindObjectsByType<PushAgentCollab>(FindObjectsSortMode.None).Length;
+        Academy.Instance.StatsRecorder.Add("Environment/NumAgents", agentCount);
+
     }
 }

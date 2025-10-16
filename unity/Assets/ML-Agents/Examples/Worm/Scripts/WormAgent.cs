@@ -70,6 +70,9 @@ public class WormAgent : Agent
         bodySegment0.rotation = Quaternion.Euler(0, Random.Range(0.0f, 360.0f), 0);
 
         UpdateOrientationObjects();
+
+        int agentCount = FindObjectsByType<WormAgent>(FindObjectsSortMode.None).Length;
+        Academy.Instance.StatsRecorder.Add("Environment/NumAgents", agentCount);
     }
 
     /// <summary>
