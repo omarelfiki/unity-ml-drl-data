@@ -25,47 +25,62 @@ TAGS = {
 N_STEPS = 1000 # Default window size after first data point
 
 def extract_metrics(run_id, log_dir, n_steps):
-    """Extract mean metrics over the first N_STEPS after the first logged step."""
-    # Locate TensorBoard event file
     event_files = glob.glob(
         os.path.join(log_dir, run_id, "**", "events.out.tfevents.*"),
         recursive=True
     )
     if not event_files:
         print(f"[WARNING] No TensorBoard logs found for run '{run_id}'")
-        return None
+        # Return all metrics with None to ensure table consistency
+        return {label: None for label in TAGS.values()} | {
+            f"{label} (start step)": None for label in TAGS.values()
+        } | {"Run ID": run_id}
 
     ea = event_accumulator.EventAccumulator(event_files[0])
     ea.Reload()
 
     metrics = {"Run ID": run_id}
-
     for tag, label in TAGS.items():
         try:
             events = ea.Scalars(tag)
         except KeyError:
             print(f"[WARNING] Missing tag '{tag}' in '{run_id}'")
             metrics[label] = None
+            metrics[f"{label} (start step)"] = None
             continue
 
         if not events:
             metrics[label] = None
+            metrics[f"{label} (start step)"] = None
             continue
 
         steps = np.array([e.step for e in events])
         values = np.array([e.value for e in events])
 
-        # Determine first available step and define window
         first_step = steps.min()
         window_limit = first_step + n_steps
         mask = (steps >= first_step) & (steps <= window_limit)
 
-        if np.any(mask):
-            metrics[label] = float(values[mask].mean())
-            metrics[f"{label} (start step)"] = int(first_step)
-        else:
-            metrics[label] = None
-            metrics[f"{label} (start step)"] = int(first_step)
+        metrics[label] = float(values[mask].mean()) if np.any(mask) else None
+        metrics[f"{label} (start step)"] = int(first_step)
+
+    # Compute step interval used for computing running means
+    all_steps = []
+    for tag in TAGS.keys():
+        try:
+            events = ea.Scalars(tag)
+            if events:
+                steps = np.array([e.step for e in events])
+                all_steps.extend(steps)
+        except Exception:
+            continue
+
+    if all_steps:
+        first_step = min(all_steps)
+        last_step = max(all_steps)
+        metrics["Step Interval (Running Mean)"] = int(last_step - first_step)
+    else:
+        metrics["Step Interval (Running Mean)"] = None
 
     return metrics
 
@@ -246,16 +261,36 @@ def main():
     data_dir = os.path.join(project_root, "data")
     os.makedirs(data_dir, exist_ok=True)
 
+    CSV_HEADERS = [
+        "Run ID", "Environment", "Seed", "Number of Agents", "Algorithm",
+        "Steps", "Batch Size", "Buffer Size", "Learning Rate", "Epochs",
+        "Total Time (s)", "Average CPU (%)", "Average RAM (%)", "Step Interval (Running Mean)",
+        "Mean Policy Reward", "Mean Policy Reward (start step)",
+        "Mean Policy Loss", "Mean Policy Loss (start step)",
+        "Mean Value Loss", "Mean Value Loss (start step)",
+        "Mean Entropy", "Mean Entropy (start step)"
+    ]
+
     csv_file = os.path.join(data_dir, "combined_results.csv")
     json_file = os.path.join(data_dir, "combined_results.json")
 
     # Write or append to CSV
     file_exists = os.path.isfile(csv_file)
-    with open(csv_file, mode='a', newline='') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=combined_data.keys())
+    # Ensure file ends with a newline before appending
+    with open(csv_file, 'a+', newline='') as csvfile:
+        csvfile.seek(0, os.SEEK_END)
+        if csvfile.tell() > 0:
+            csvfile.seek(csvfile.tell() - 1)
+            last_char = csvfile.read(1)
+            if last_char != '\n':
+                csvfile.write('\n')
+
+        writer = csv.DictWriter(csvfile, fieldnames=CSV_HEADERS)
         if not file_exists:
             writer.writeheader()
-        writer.writerow(combined_data)
+        # Filter and enforce correct order
+        filtered_data = {key: combined_data.get(key, "") for key in CSV_HEADERS}
+        writer.writerow(filtered_data)
 
     # Write or append to JSON
     json_data = []
