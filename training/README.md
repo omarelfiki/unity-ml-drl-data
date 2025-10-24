@@ -1,6 +1,6 @@
 
 ## Starting a Training Run
-Once Unity and Python are set up, you can train agents using the provides example enviroments or your own custom ones
+Once Unity and Python are set up, you can train agents using the provided example enviroments or your own custom ones
 
 **Open an Enviroment in Unity**
 
