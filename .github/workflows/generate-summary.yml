@@ -33,7 +33,7 @@ jobs:
           pip install pandas tabulate matplotlib
 
       - name: Generate summary report
-        run: python training/scripts/generate_summary.py
+        run: python training/scripts/results_summary.py
 
       - name: Commit and push summary report
         env:
