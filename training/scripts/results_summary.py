@@ -10,7 +10,6 @@ DO NOT CHANGE FILE NAME OR LOCATION. Dependency for Github Actions.
 import pandas as pd
 import matplotlib.pyplot as plt
 import base64
-import io
 import os
 from datetime import datetime
 
@@ -133,7 +132,6 @@ def create_chart_base64(df_plot, x_col, y_col, title):
         return None
 
     try:
-        # Create plot
         plt.figure(figsize=(8, 4))
         plt.scatter(plot_data[x_col], plot_data[y_col], alpha=0.6, s=15)
         plt.title(title)
@@ -142,21 +140,24 @@ def create_chart_base64(df_plot, x_col, y_col, title):
         plt.grid(True, linestyle="--", alpha=0.5)
         plt.tight_layout()
 
-        # Save plot to memory buffer to avoid managing temp files on disk
-        buffer = io.BytesIO()
-        plt.savefig(buffer, format="png", dpi=90)
-        plt.close() # Free my boy memory, he aint do nothing wrong
-        buffer.seek(0)
+        # Ensure plots directory exists
+        plots_dir = (project_root + "\data\plots")
+        os.makedirs(plots_dir, exist_ok=True)
+        file_path = os.path.join(plots_dir, f"{title}.png")
 
-        # Encode to Base64 string
-        img_base64 = base64.b64encode(buffer.read()).decode("utf-8")
-        log(f"Generated plot: {title}")
-        # Return Markdown image tag
+        # Save plot directly to disk
+        plt.savefig(file_path, dpi=90)
+        plt.close()  # Free memory
+
+        # Encode to Base64 string from saved file
+        with open(file_path, "rb") as f:
+            img_base64 = base64.b64encode(f.read()).decode("utf-8")
+        log(f"Generated plot: {title} (saved to {file_path})")
         return f"![{title}](data:image/png;base64,{img_base64})"
 
     except Exception as e:
         log(f"[ERROR] Error creating plot '{title}': {e}")
-        plt.close() # Ensure figure is closed on error
+        plt.close()  # Ensure figure is closed on error
         return None
 
 # Generate the plots defined in PLOT_PAIRS
