@@ -456,7 +456,8 @@ def auto_commit_results(commit_message="Auto-update: new training results"):
 
         # Check clean working tree
         status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True)
-        if status.stdout.strip():
+        filtered_lines = "\n".join(line for line in status.stdout.strip().splitlines() if not line.startswith("??"))
+        if filtered_lines:
             print("[WARNING] Working directory not clean. Commit or stash your changes before training.")
             print(f"[WARNING] Aborting auto-commit.")
             return
