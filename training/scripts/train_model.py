@@ -1,20 +1,19 @@
 from tensorboard.backend.event_processing import event_accumulator
 import psutil
-import subprocess
 import threading
 import time
 import argparse
 import numpy as np
 import glob
-import os
 import yaml
 import sys
 import csv
 import json
+import subprocess
+import os
 
 # Usage
 # python train_model.py --config [config.yaml] --run-id [naming_convention] (optional: --num-steps [int])
-
 TAGS = {
     "Environment/Cumulative Reward": "Mean Policy Reward",
     "Losses/Policy Loss": "Mean Policy Loss",
@@ -22,7 +21,7 @@ TAGS = {
     "Policy/Entropy": "Mean Entropy",
     "Environment/NumAgents": "Number of Agents"
 }
-
+AUTO_COMMIT_BRANCH = "main"
 N_STEPS = 1000 # Default window size after the first data point
 
 KEY_MAPPING = {
@@ -143,11 +142,17 @@ def parse_arguments_and_load_config():
     parser.add_argument("--config", required=True, help="Path to the ML-Agents YAML config file")
     parser.add_argument("--run-id", required=True, help="Run ID for the training session")
     parser.add_argument("--num-steps", type=int, default=N_STEPS, help="Number of steps to monitor")
+    parser.add_argument("--ac", action="store_true", help="Activate auto-commit")
     args = parser.parse_args()
 
     config_file = args.config
     run_id = args.run_id
     num_steps = args.num_steps
+    ac = args.ac
+    if ac:
+        print(f"[INFO]: Auto-commit activated for run: '{run_id}'")
+    else:
+        print(f"[INFO]: Auto-commit disabled. Results will not be auto-committed.")
 
     config_data = {}
     try:
@@ -156,7 +161,7 @@ def parse_arguments_and_load_config():
     except Exception as e:
         print(f"[ERROR] Could not read config file '{config_file}': {e}")
 
-    return config_file, run_id, num_steps, config_data
+    return config_file, run_id, num_steps, config_data, ac
 
 def run_training_process(config_file, run_id):
     print(f"\n Starting ML-Agents training")
@@ -436,12 +441,65 @@ def save_and_display_results(combined_data):
         json.dump(json_data, jf, indent=4)
         print(f"[INFO] Results saved to '{json_file}'")
 
+def auto_commit_results(commit_message="Auto-update: new training results"):
+    """Safely auto-commit updated dataset files after validation."""
+    data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../data"))
+    files_to_commit = ["combined_results.csv", "combined_results.json"]
+
+    try:
+        # Verify branch is selected branch
+        branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).decode().strip()
+        if branch != AUTO_COMMIT_BRANCH:
+            print(f"[WARNING] Current branch is '{branch}', not '{AUTO_COMMIT_BRANCH}'")
+            print(f"[WARNING] Aborting auto-commit.")
+            return
+
+        # Check clean working tree
+        status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True)
+        if status.stdout.strip():
+            print("[WARNING] Working directory not clean. Commit or stash your changes before training.")
+            print(f"[WARNING] Aborting auto-commit.")
+            return
+
+        # Ensure up-to-date with origin
+        subprocess.run(["git", "fetch", "origin"], check=True)
+        local = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
+        remote = subprocess.check_output(["git", "rev-parse", f"origin/{AUTO_COMMIT_BRANCH}"]).decode().strip()
+        if local != remote:
+            print(f"[WARNING] Local branch not up to date with origin/{AUTO_COMMIT_BRANCH}. Please pull first.")
+            print(f"[WARNING] Aborting auto-commit.")
+            return
+
+        # Stage files
+        print(f"[INFO] Staging dataset files for commit on branch '{branch}'")
+        for file in files_to_commit:
+            file_path = os.path.join(data_dir, file)
+            if os.path.exists(file_path):
+                subprocess.run(["git", "add", file_path], check=True)
+            else:
+                print(f"[WARNING] File not found: {file}")
+
+        result = subprocess.run(["git", "diff", "--cached", "--quiet"])
+        if result.returncode != 0:  # there are changes staged
+            subprocess.run(["git", "commit", "-m", commit_message], check=True)
+            subprocess.run(["git", "push"], check=True)
+            print("[INFO] Auto-commit completed successfully.")
+        else:
+            print("[INFO] No dataset changes to commit.")
+
+    except subprocess.CalledProcessError as e:
+        print(f"[ERROR] Git command failed: {e}")
+    except Exception as e:
+        print(f"[ERROR] Unexpected error: {e}")
+
 def main():
-    config_file, run_id, num_steps, config_data = parse_arguments_and_load_config()
+    config_file, run_id, num_steps, config_data, ac = parse_arguments_and_load_config()
     total_time, mean_cpu, mean_ram = run_training_process(config_file, run_id)
     combined_data, behavior_name, environment, total_time, log_dir = analyze_training_results(run_id, config_file, num_steps, config_data, total_time, mean_cpu, mean_ram)
     analyze_thresholds(run_id, behavior_name, environment, total_time, log_dir, combined_data)
     save_and_display_results(combined_data)
+    if ac:
+        auto_commit_results(f"Auto-update: new training results for {run_id}")
 
 if __name__ == "__main__":
     main()
