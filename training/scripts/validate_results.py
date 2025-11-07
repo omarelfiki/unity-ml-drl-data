@@ -16,7 +16,6 @@ log("=== Starting Validation Process ===")
 start_time = time.time()
 
 # === PATH SETUP ===
-# TODO: Define paths for data files and output report.
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 data_dir = os.path.join(project_root, "data")
 csv_path = os.path.join(data_dir, "combined_results.csv")
@@ -27,9 +26,6 @@ log(f"Project root: {project_root}")
 log(f"Target file: {csv_path}")
 
 # === STEP 1: LOAD DATA ===
-# TODO:
-# - Load combined_results.csv into pandas DataFrame
-# - Optionally cross-check JSON consistency
 try:
     df = pd.read_csv(csv_path)
     df = df.fillna("N/A")
@@ -39,13 +35,27 @@ except Exception as e:
     df = pd.DataFrame()
 
 # === STEP 2: DEFINE VALIDATION RULES ===
-# TODO:
-# - Define expected columns, allowed value ranges, and required data types
 expected_columns = [
-    "Run ID", "Environment", "Seed", "Number of Agents", "Algorithm", "Steps",
-    "Batch Size", "Buffer Size", "Learning Rate", "Epochs",
-    "Total Time (s)", "Average CPU (%)", "Average RAM (%)",
-    "Mean Policy Reward", "Mean Policy Loss", "Mean Value Loss", "Mean Entropy"
+        # Identifiers
+        "run_id", "environment", "seed", "num_agents",
+
+        # Training configuration
+        "algorithm", "steps", "batch_size", "buffer_size",
+        "learning_rate", "epochs",
+
+        # System performance
+        "total_time", "average_cpu", "average_ram",
+
+        # Tensorboard metrics
+        "step_interval", "reward_mean", "reward_mean_step",
+        "p_loss_mean", "p_loss_mean_step", "v_loss_mean", "v_loss_mean_step",
+        "entropy_mean", "entropy_mean_step",
+
+        # Threshold analysis
+        "threshold_value", "steps_to_threshold", "time_to_threshold", "threshold_version",
+
+        # Future-fields for predictions
+        "run_reached_threshold", "best_reward_before_timeout", "step_of_best_reward"
 ]
 
 validation_issues = []
@@ -63,11 +73,29 @@ if not df.empty:
             if not invalid.empty:
                 validation_issues.append(f"Out-of-range values in '{col}' ({len(invalid)} rows)")
 
-    check_range("Average CPU (%)", 0, 100)
-    check_range("Average RAM (%)", 0, 100)
+    def check_threshold_versions(col):
+        """Ensure that all threshold versions referenced in CSV exist in data/thresholds/."""
+        if col in df.columns:
+            thresholds_dir = os.path.join(data_dir, "thresholds")
+            if not os.path.exists(thresholds_dir):
+                validation_issues.append("Thresholds directory missing.")
+                return
+            existing_files = {f.replace("thresholds_", "").replace(".json", "")
+                              for f in os.listdir(thresholds_dir)
+                              if f.startswith("thresholds_") and f.endswith(".json")}
+
+            missing_versions = set(df[col].unique()) - existing_files - {"N/A"}
+            if missing_versions:
+                validation_issues.append(
+                    f"Missing threshold version files for: {', '.join(missing_versions)}"
+                )
+
+    check_range("average_cpu", 0, 100)
+    check_range("average_ram", 0, 100)
+    check_threshold_versions("threshold_version");
 
     # Type consistency check
-    for col in ["Total Time (s)", "Mean Policy Reward"]:
+    for col in ["total_time", "reward_mean"]:
         if col in df.columns and not pd.api.types.is_numeric_dtype(df[col]):
             validation_issues.append(f"Invalid data type in column: {col}")
 
@@ -75,8 +103,6 @@ else:
     validation_issues.append("CSV file is empty or unreadable.")
 
 # === STEP 3: CROSS-VERIFY JSON (Optional) ===
-# TODO:
-# - Optionally compare number of entries between CSV and JSON.
 try:
     if os.path.exists(json_path):
         with open(json_path, "r") as f:
@@ -90,8 +116,6 @@ except Exception as e:
     log(f"[WARNING] Could not verify JSON file: {e}")
 
 # === STEP 4: GENERATE VALIDATION REPORT ===
-# TODO:
-# - Create a Markdown summary file summarizing all checks.
 try:
     with open(report_md, "w") as f:
         f.write("# Data Validation Report\n\n")
