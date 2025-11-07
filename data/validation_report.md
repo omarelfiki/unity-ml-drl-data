@@ -1,6 +1,6 @@
 # Data Validation Report
 
-Generated on 2025-11-07 09:06:08
+Generated on 2025-11-07 09:10:05
 
 ⚠️ **Issues found:**
 - Out-of-range values in 'Average CPU (%)' (4 rows)
