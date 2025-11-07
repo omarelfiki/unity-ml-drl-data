@@ -51,6 +51,7 @@ KEY_MAPPING = {
         "Threshold Value": "threshold_value",
         "Steps to Threshold": "steps_to_threshold",
         "Time to Threshold (s)": "time_to_threshold",
+        "Threshold Version": "threshold_version",
         "Run Reached Threshold": "run_reached_threshold",
         "Best Reward Before Timeout": "best_reward_before_timeout",
         "Step Of Best Reward": "step_of_best_reward",
@@ -287,15 +288,16 @@ def analyze_training_results(run_id, config_file, num_steps, config_data, total_
     return combined_data, behavior_name, environment, total_time, log_dir
 
 def analyze_thresholds(run_id, behavior_name, environment, total_time, log_dir, combined_data):
-    thresholds_path = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")), "data", "reference_thresholds.json")
+    thresholds_path = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")), "data", "thresholds" ,"latest_thresholds.json")
     threshold_value = "N/A"
     steps_to_threshold = "Not reached"
     time_to_threshold = "Not reached"
     try:
         with open(thresholds_path, 'r') as f:
-            thresholds = json.load(f)
+            thresholds_file = json.load(f)
         # Determine environment name for threshold lookup
         env_name_for_threshold = behavior_name if behavior_name else environment
+        thresholds = thresholds_file["thresholds"]
         if env_name_for_threshold in thresholds:
             env_threshold_entry = thresholds[environment]
             threshold_value = env_threshold_entry["T_run"] if isinstance(env_threshold_entry, dict) else env_threshold_entry
@@ -347,6 +349,7 @@ def analyze_thresholds(run_id, behavior_name, environment, total_time, log_dir, 
     combined_data["Threshold Value"] = str(threshold_value)
     combined_data["Steps to Threshold"] = str(steps_to_threshold)
     combined_data["Time to Threshold (s)"] = str(time_to_threshold)
+    combined_data["Threshold Version"] = str(thresholds_file["version"])
 
 def save_and_display_results(combined_data):
     key_width = max(len(k) for k in combined_data.keys())
@@ -383,7 +386,7 @@ def save_and_display_results(combined_data):
         "entropy_mean", "entropy_mean_step",
 
         # Threshold analysis
-        "threshold_value", "steps_to_threshold", "time_to_threshold",
+        "threshold_value", "steps_to_threshold", "time_to_threshold", "threshold_version",
 
         # Future-fields for predictions
         "run_reached_threshold", "best_reward_before_timeout", "step_of_best_reward"

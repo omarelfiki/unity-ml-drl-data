@@ -73,7 +73,7 @@ expected_columns = [
         "entropy_mean", "entropy_mean_step",
 
         # Threshold analysis
-        "threshold_value", "steps_to_threshold", "time_to_threshold",
+        "threshold_value", "steps_to_threshold", "time_to_threshold", "threshold_version",
 
         # Future-fields for predictions
         "run_reached_threshold", "best_reward_before_timeout", "step_of_best_reward"
@@ -94,8 +94,26 @@ if not df.empty:
             if not invalid.empty:
                 validation_issues.append(f"Out-of-range values in '{col}' ({len(invalid)} rows)")
 
+    def check_threshold_versions(col):
+        """Ensure that all threshold versions referenced in CSV exist in data/thresholds/."""
+        if col in df.columns:
+            thresholds_dir = os.path.join(data_dir, "thresholds")
+            if not os.path.exists(thresholds_dir):
+                validation_issues.append("Thresholds directory missing.")
+                return
+            existing_files = {f.replace("thresholds_", "").replace(".json", "")
+                              for f in os.listdir(thresholds_dir)
+                              if f.startswith("thresholds_") and f.endswith(".json")}
+
+            missing_versions = set(df[col].unique()) - existing_files - {"N/A"}
+            if missing_versions:
+                validation_issues.append(
+                    f"Missing threshold version files for: {', '.join(missing_versions)}"
+                )
+
     check_range("average_cpu", 0, 100)
     check_range("average_ram", 0, 100)
+    check_threshold_versions("threshold_version");
 
     # Type consistency check
     for col in ["total_time", "reward_mean"]:

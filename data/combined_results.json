@@ -608,5 +608,33 @@
         "Threshold Value": "0.9635199999999999",
         "Steps to Threshold": "12000",
         "Time to Threshold (s)": "0.0"
+    },
+    {
+        "Run ID": "OE_071125_3DBall",
+        "Environment": "3DBall",
+        "Seed": "-1",
+        "Algorithm": "ppo",
+        "Steps": "50000",
+        "Batch Size": "64",
+        "Buffer Size": "12000",
+        "Learning Rate": "0.0003",
+        "Epochs": "3",
+        "Total Time": "43",
+        "Average CPU": "39.3",
+        "Average RAM": "80.0",
+        "Mean Policy Reward": "1.0691",
+        "Mean Policy Reward (start step)": "12000",
+        "Mean Policy Loss": "0.0921",
+        "Mean Policy Loss (start step)": "24000",
+        "Mean Value Loss": "0.1564",
+        "Mean Value Loss (start step)": "24000",
+        "Mean Entropy": "1.4189",
+        "Mean Entropy (start step)": "12000",
+        "Number of Agents": "12.0000",
+        "Step Interval (Running Mean)": "36000",
+        "Threshold Value": "0.9635199999999999",
+        "Steps to Threshold": "12000",
+        "Time to Threshold (s)": "0.0",
+        "Threshold Version": "2025-11-07_15-45"
     }
 ]

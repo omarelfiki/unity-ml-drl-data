@@ -6,9 +6,10 @@ import json
 from pathlib import Path
 import numpy as np
 import pandas as pd
+from datetime import datetime
 
 DATA_FILE = Path(__file__).resolve().parent.parent.parent / "data" / "combined_results.csv"
-OUTPUT_FILE = Path(__file__).resolve().parent.parent.parent / "data" / "reference_thresholds.json"
+THRESHOLDS_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "thresholds"
 
 # Default Parameters
 TAIL_STEPS_DEFAULT = 50_000
@@ -46,18 +47,21 @@ def main():
     thresholds = {}
 
     for env_name, group in df.groupby("environment"):
-        # Sort by Step ascending
+        # Sort by step ascending and align steps with non-null rewards
         group_sorted = group.sort_values("steps")
-        steps = group_sorted["steps"].to_list()
-        rewards = pd.to_numeric(group_sorted["reward_mean"], errors="coerce").dropna().to_list()
+        rewards_series = pd.to_numeric(group_sorted["reward_mean"], errors="coerce").dropna()
+        steps_series = group_sorted.loc[rewards_series.index, "steps"]
+
+        rewards = rewards_series.tolist()
+        steps = steps_series.tolist()
 
         r_star, t_run = compute_threshold_from_rewards(rewards)
         if r_star is None:
             continue
 
         first_reach = find_first_step_reaching_threshold(steps, rewards, t_run)
-        best_reward = max(rewards)
-        best_step = steps[np.argmax(rewards)] if rewards else None
+        best_reward = max(rewards) if rewards else None
+        best_step = steps[int(np.argmax(rewards))] if rewards else None
 
         thresholds[env_name] = {
             "environment": env_name,
@@ -75,10 +79,32 @@ def main():
         print(f"{env_name}: R*={r_star:.3f}, T={t_run:.3f}, best={best_reward:.3f}, "
               f"points={len(rewards)}, first reach step={first_reach}")
 
-    OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    with open(OUTPUT_FILE, "w") as f:
-        json.dump(thresholds, f, indent=2)
-    print(f"\nSaved thresholds to: {OUTPUT_FILE}")
+    # Assemble payload with metadata
+    version_ts = datetime.now().strftime("%Y-%m-%d_%H-%M")
+    payload = {
+        "version": version_ts,
+        "generated_at": datetime.now().isoformat(timespec="seconds"),
+        "source_file": str(DATA_FILE.resolve()),
+        "method": "empirical_reference",
+        "alpha": ALPHA_DEFAULT,
+        "window_last_steps": TAIL_STEPS_DEFAULT,
+        "thresholds": thresholds,
+    }
+
+    # Ensure output directory exists
+    THRESHOLDS_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Write timestamped and "latest" files
+    timestamped_path = THRESHOLDS_DIR / f"thresholds_{version_ts}.json"
+    latest_path = THRESHOLDS_DIR / "latest_thresholds.json"
+
+    with open(timestamped_path, "w") as f:
+        json.dump(payload, f, indent=2)
+    with open(latest_path, "w") as f:
+        json.dump(payload, f, indent=2)
+
+    print(f"\nSaved thresholds version to: {timestamped_path}")
+    print(f"Updated latest thresholds at: {latest_path}")
 
 if __name__ == "__main__":
     main()
