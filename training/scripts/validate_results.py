@@ -1,24 +1,3 @@
-"""
-This script:
-1. Checks the structure and format of combined_results.csv and combined_results.json.
-2. Ensures all required columns are present.
-3. Verifies value ranges, data types, and missing values.
-4. Prints a validation summary (and optionally fail GitHub Actions if issues found).
-5. Optionally appends results to a validation log file.
-
-Inputs:
-    - data/combined_results.csv (required)
-    - data/combined_results.json (optional)
-
-Outputs:
-    - data/validation_report.md (summary report)
-    - (optional) printed logs for CI/CD workflow validation
-
-Dependencies:
-    pandas, json
-
-"""
-
 # === Imports ===
 import pandas as pd
 import json

@@ -5,18 +5,21 @@ on:
     paths:
       - "data/combined_results.csv"
       - "data/combined_results.json"
-  pull_request:
-    paths:
-      - "data/combined_results.csv"
-      - "data/combined_results.json"
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   validate:
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -32,9 +35,10 @@ jobs:
         run: |
           python training/scripts/validate_results.py
 
-      - name: Upload validation report
-        if: always()  # upload even if validation fails
-        uses: actions/upload-artifact@v4
+      - name: Commit & Push summary
+        uses: actions-js/push@master
         with:
-          name: validation-report
-          path: data/validation_report.md
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref_name }}
+          message: "Auto-update validation report [skip ci]"
+          directory: .
