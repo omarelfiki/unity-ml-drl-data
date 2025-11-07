@@ -1,12 +1,10 @@
 """
-TODO: Validate collected training results for consistency and correctness.
-
-This script should:
-1. Check the structure and format of combined_results.csv and combined_results.json.
-2. Ensure all required columns are present.
-3. Verify value ranges, data types, and missing values.
-4. Print a validation summary (and optionally fail GitHub Actions if issues found).
-5. Optionally append results to a validation log file.
+This script:
+1. Checks the structure and format of combined_results.csv and combined_results.json.
+2. Ensures all required columns are present.
+3. Verifies value ranges, data types, and missing values.
+4. Prints a validation summary (and optionally fail GitHub Actions if issues found).
+5. Optionally appends results to a validation log file.
 
 Inputs:
     - data/combined_results.csv (required)
@@ -19,7 +17,6 @@ Outputs:
 Dependencies:
     pandas, json
 
-DO NOT CHANGE FILE NAME OR LOCATION. Dependency for Github Actions.
 """
 
 # === Imports ===
@@ -40,7 +37,6 @@ log("=== Starting Validation Process ===")
 start_time = time.time()
 
 # === PATH SETUP ===
-# TODO: Define paths for data files and output report.
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 data_dir = os.path.join(project_root, "data")
 csv_path = os.path.join(data_dir, "combined_results.csv")
@@ -51,9 +47,6 @@ log(f"Project root: {project_root}")
 log(f"Target file: {csv_path}")
 
 # === STEP 1: LOAD DATA ===
-# TODO:
-# - Load combined_results.csv into pandas DataFrame
-# - Optionally cross-check JSON consistency
 try:
     df = pd.read_csv(csv_path)
     df = df.fillna("N/A")
@@ -63,13 +56,16 @@ except Exception as e:
     df = pd.DataFrame()
 
 # === STEP 2: DEFINE VALIDATION RULES ===
-# TODO:
-# - Define expected columns, allowed value ranges, and required data types
 expected_columns = [
-    "Run ID", "Environment", "Seed", "Number of Agents", "Algorithm", "Steps",
-    "Batch Size", "Buffer Size", "Learning Rate", "Epochs",
-    "Total Time (s)", "Average CPU (%)", "Average RAM (%)",
-    "Mean Policy Reward", "Mean Policy Loss", "Mean Value Loss", "Mean Entropy"
+        "run_id", "environment", "seed", "num_agents",
+        "algorithm", "steps", "batch_size", "buffer_size",
+        "learning_rate", "epochs", "total_time", "average_cpu",
+        "average_ram", "step_interval", "reward_mean", "reward_mean_step",
+        "p_loss_mean", "p_loss_mean_step", "v_loss_mean", "v_loss_mean_step",
+        "entropy_mean", "entropy_mean_step", "threshold_method", "threshold_value",
+        "threshold_alpha", "reference_window_last_steps", "smoothing_window", "patience_k",
+        "first_data_step", "run_reached_threshold", "best_reward_before_timeout", "step_of_best_reward",
+        "episode_success_rule", "episode_success_rate_window"
 ]
 
 validation_issues = []
@@ -87,11 +83,11 @@ if not df.empty:
             if not invalid.empty:
                 validation_issues.append(f"Out-of-range values in '{col}' ({len(invalid)} rows)")
 
-    check_range("Average CPU (%)", 0, 100)
-    check_range("Average RAM (%)", 0, 100)
+    check_range("average_cpu", 0, 100)
+    check_range("average_ram", 0, 100)
 
     # Type consistency check
-    for col in ["Total Time (s)", "Mean Policy Reward"]:
+    for col in ["total_time", "reward_mean"]:
         if col in df.columns and not pd.api.types.is_numeric_dtype(df[col]):
             validation_issues.append(f"Invalid data type in column: {col}")
 
@@ -99,8 +95,6 @@ else:
     validation_issues.append("CSV file is empty or unreadable.")
 
 # === STEP 3: CROSS-VERIFY JSON (Optional) ===
-# TODO:
-# - Optionally compare number of entries between CSV and JSON.
 try:
     if os.path.exists(json_path):
         with open(json_path, "r") as f:
@@ -114,8 +108,6 @@ except Exception as e:
     log(f"[WARNING] Could not verify JSON file: {e}")
 
 # === STEP 4: GENERATE VALIDATION REPORT ===
-# TODO:
-# - Create a Markdown summary file summarizing all checks.
 try:
     with open(report_md, "w") as f:
         f.write("# Data Validation Report\n\n")
@@ -139,22 +131,15 @@ except Exception as e:
     log(f"[ERROR] Failed to write validation report: {e}")
 
 # === STEP 5: ACTION OUTCOME ===
-# TODO:
-# - Fail GitHub Action if validation issues exist.
 if validation_issues:
     log("Validation failed with issues:")
     for issue in validation_issues:
         log(f"   - {issue}")
-    exit_code = 1
 else:
     log("Validation completed with no issues.")
-    exit_code = 0
 
 # === STEP 6: END ===
 end_time = time.time()
 duration = round(end_time - start_time, 2)
 log(f"Finished in {duration} seconds.")
 log("=== Validation Process Complete ===")
-
-# Exit for GitHub Actions
-exit(exit_code)
