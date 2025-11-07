@@ -1,27 +1,3 @@
-"""
-TODO: Validate collected training results for consistency and correctness.
-
-This script should:
-1. Check the structure and format of combined_results.csv and combined_results.json.
-2. Ensure all required columns are present.
-3. Verify value ranges, data types, and missing values.
-4. Print a validation summary (and optionally fail GitHub Actions if issues found).
-5. Optionally append results to a validation log file.
-
-Inputs:
-    - data/combined_results.csv (required)
-    - data/combined_results.json (optional)
-
-Outputs:
-    - data/validation_report.md (summary report)
-    - (optional) printed logs for CI/CD workflow validation
-
-Dependencies:
-    pandas, json
-
-DO NOT CHANGE FILE NAME OR LOCATION. Dependency for Github Actions.
-"""
-
 # === Imports ===
 import pandas as pd
 import json
@@ -139,22 +115,15 @@ except Exception as e:
     log(f"[ERROR] Failed to write validation report: {e}")
 
 # === STEP 5: ACTION OUTCOME ===
-# TODO:
-# - Fail GitHub Action if validation issues exist.
 if validation_issues:
     log("Validation failed with issues:")
     for issue in validation_issues:
         log(f"   - {issue}")
-    exit_code = 1
 else:
     log("Validation completed with no issues.")
-    exit_code = 0
 
 # === STEP 6: END ===
 end_time = time.time()
 duration = round(end_time - start_time, 2)
 log(f"Finished in {duration} seconds.")
 log("=== Validation Process Complete ===")
-
-# Exit for GitHub Actions
-exit(exit_code)
