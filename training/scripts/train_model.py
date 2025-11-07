@@ -183,7 +183,7 @@ def run_training_process(config_file, run_id):
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
         )
 
-        # Start system monitoring thread after process is launched
+        # Start system monitoring thread after a process is launched
         def monitor_wrapper():
             results["metrics"] = monitor_system(stop_event)
         monitor_thread = threading.Thread(target=monitor_wrapper)
@@ -287,7 +287,7 @@ def analyze_training_results(run_id, config_file, num_steps, config_data, total_
                 display_value = f"{value:.4f}"
             else:
                 display_value = str(value)
-            # Update value if key exists, else add new
+            # Update value if the key exists, else add new
             combined_data[key] = display_value
 
     return combined_data, behavior_name, environment, total_time, log_dir
@@ -318,8 +318,8 @@ def analyze_thresholds(run_id, behavior_name, environment, total_time, log_dir, 
                     reward_events = ea.Scalars("Environment/Cumulative Reward")
                     if reward_events:
                         # Sort events by step
-                        reward_events.sort(key=lambda e: e.step)
-                        # Find first step where mean reward >= threshold
+                        reward_events.sort(key=lambda el: el.step)
+                        # Find the first step where mean reward >= threshold
                         threshold_reached_step = None
                         for e in reward_events:
                             if e.value >= threshold_value:
@@ -327,8 +327,8 @@ def analyze_thresholds(run_id, behavior_name, environment, total_time, log_dir, 
                                 break
                         if threshold_reached_step is not None:
                             steps_to_threshold = threshold_reached_step
-                            # Estimate time to threshold as proportion of total steps * total time
-                            # Find first step in reward_events
+                            # Estimate time to the threshold as a proportion of total steps * total time
+                            # Find the first step in reward_events
                             first_step = reward_events[0].step
                             last_step = reward_events[-1].step
                             total_steps = last_step - first_step if last_step > first_step else 1
@@ -410,7 +410,7 @@ def save_and_display_results(combined_data):
 
     # Write or append to CSV
     file_exists = os.path.isfile(csv_file)
-    # Ensure file ends with a newline before appending
+    # Ensure the file ends with a newline before appending
     with open(csv_file, 'a+', newline='') as csvfile:
         csvfile.seek(0, os.SEEK_END)
         if csvfile.tell() > 0:
@@ -454,15 +454,42 @@ def auto_commit_results(commit_message="Auto-update: new training results"):
             print(f"[WARNING] Aborting auto-commit.")
             return
 
-        # Check clean working tree
+        # Check for a clean working tree
         status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True)
-        filtered_lines = "\n".join(line for line in status.stdout.strip().splitlines() if not line.startswith("??"))
-        if filtered_lines:
-            print("[WARNING] Working directory not clean. Commit or stash your changes before training.")
+        status_lines = status.stdout.strip().splitlines()
+
+        def _should_ignore_porcelain(line: str) -> bool:
+            if not line:
+                return True
+            # Porcelain format: two status chars + "" + path
+            xy = line[:2]
+            raw_path = line[3:].strip()
+            if " -> " in raw_path:
+                raw_path = raw_path.split(" -> ", 1)[-1].strip()
+            path_rel = os.path.normpath(raw_path)
+
+            # Ignore untracked files entirely
+            if xy == "??":
+                return True
+
+            # Allow the result files to be dirty (staged or unstaged)
+            allowed_dirty = {
+                os.path.normpath(os.path.join("data", "combined_results.csv")),
+                os.path.normpath(os.path.join("data", "combined_results.json")),
+            }
+            if path_rel in allowed_dirty:
+                return True
+
+            return False
+
+        dirty_changes = [ln for ln in status_lines if not _should_ignore_porcelain(ln)]
+
+        if dirty_changes:
+            print("[WARNING] Working directory not clean (excluding results files). Please commit or stash your changes before training.")
             print(f"[WARNING] Aborting auto-commit.")
             return
 
-        # Ensure up-to-date with origin
+        # Ensure up to date with origin
         subprocess.run(["git", "fetch", "origin"], check=True)
         local = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
         remote = subprocess.check_output(["git", "rev-parse", f"origin/{AUTO_COMMIT_BRANCH}"]).decode().strip()
