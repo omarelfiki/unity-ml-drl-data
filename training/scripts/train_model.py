@@ -484,7 +484,7 @@ def auto_commit_results(commit_message="Auto-update: new training results"):
 
         dirty_changes = [ln for ln in status_lines if not _should_ignore_porcelain(ln)]
 
-        if dirty_changes:
+        if any(ln.strip() for ln in dirty_changes):
             print("[WARNING] Working directory not clean (excluding results files). Please commit or stash your changes before training.")
             print(f"[WARNING] Aborting auto-commit.")
             return
