@@ -28,64 +28,16 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pandas tabulate matplotlib
+          pip install pandas tabulate matplotlib numpy pathlib
 
       - name: Generate summary report
         run: python training/scripts/results_summary.py
 
-  update-thresholds:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-          fetch-depth: 0
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pandas numpy pathlib
-
       - name: Generate thresholds
         run: python training/scripts/compute_threshold.py
 
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-          fetch-depth: 0
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pandas
-
       - name: Run validation script
         run: python training/scripts/validate_results.py
-
-  commit:
-    needs: [generate-report, update-thresholds, validate]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository (for push)
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: true
-          fetch-depth: 0
 
       - name: Commit & push all updates
         uses: actions-js/push@master
