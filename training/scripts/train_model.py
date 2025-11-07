@@ -21,7 +21,7 @@ TAGS = {
     "Policy/Entropy": "Mean Entropy",
     "Environment/NumAgents": "Number of Agents"
 }
-AUTO_COMMIT_BRANCH = "main"
+AUTO_COMMIT_BRANCH = "20-auto-commit"
 N_STEPS = 1000 # Default window size after the first data point
 
 KEY_MAPPING = {
