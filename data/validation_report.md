@@ -1,12 +1,13 @@
 # Data Validation Report
 
-Generated on 2025-11-07 09:10:05
+Generated on 2025-11-07 15:58:38
 
 ⚠️ **Issues found:**
-- Out-of-range values in 'Average CPU (%)' (4 rows)
-- Invalid data type in column: Mean Policy Reward
+- Out-of-range values in 'average_cpu' (4 rows)
+- Invalid data type in column: reward_mean
+- Mismatch: JSON has 25 entries, CSV has 24.
 
 ## Dataset Overview
-- Rows: 23
-- Columns: 25
+- Rows: 24
+- Columns: 29
 - Missing values: 0
