@@ -228,9 +228,9 @@ def main():
         "Buffer Size": f"{get_param(('behaviors', behavior_name, 'hyperparameters', 'buffer_size'))}",
         "Learning Rate": f"{get_param(('behaviors', behavior_name, 'hyperparameters', 'learning_rate'))}",
         "Epochs": f"{get_param(('behaviors', behavior_name, 'hyperparameters', 'num_epoch'))}",
-        "Total Time (s)": f"{total_time:.0f}",
-        "Average CPU (%)": f"{mean_cpu:.1f}",
-        "Average RAM (%)": f"{mean_ram:.1f}",
+        "Total Time": f"{total_time:.0f}",
+        "Average CPU": f"{mean_cpu:.1f}",
+        "Average RAM": f"{mean_ram:.1f}",
     }
     if metrics:
         for key, value in metrics.items():
@@ -265,13 +265,15 @@ def main():
     os.makedirs(data_dir, exist_ok=True)
 
     CSV_HEADERS = [
-        "Run ID", "Environment", "Seed", "Number of Agents", "Algorithm",
-        "Steps", "Batch Size", "Buffer Size", "Learning Rate", "Epochs",
-        "Total Time (s)", "Average CPU (%)", "Average RAM (%)", "Step Interval (Running Mean)",
-        "Mean Policy Reward", "Mean Policy Reward (start step)",
-        "Mean Policy Loss", "Mean Policy Loss (start step)",
-        "Mean Value Loss", "Mean Value Loss (start step)",
-        "Mean Entropy", "Mean Entropy (start step)"
+        "run_id", "environment", "seed", "num_agents",
+        "algorithm", "steps", "batch_size", "buffer_size",
+        "learning_rate", "epochs", "total_time", "average_cpu",
+        "average_ram", "step_interval", "reward_mean", "reward_mean_step",
+        "p_loss_mean", "p_loss_mean_step", "v_loss_mean", "v_loss_mean_step",
+        "entropy_mean", "entropy_mean_step", "threshold_method", "threshold_value",
+        "threshold_alpha", "reference_window_last_steps", "smoothing_window", "patience_k",
+        "first_data_step", "run_reached_threshold", "best_reward_before_timeout", "step_of_best_reward",
+        "episode_success_rule", "episode_success_rate_window"
     ]
 
     csv_file = os.path.join(data_dir, "combined_results.csv")
