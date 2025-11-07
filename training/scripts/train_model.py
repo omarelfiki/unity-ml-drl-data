@@ -23,7 +23,39 @@ TAGS = {
     "Environment/NumAgents": "Number of Agents"
 }
 
-N_STEPS = 1000 # Default window size after first data point
+N_STEPS = 1000 # Default window size after the first data point
+
+KEY_MAPPING = {
+        "Run ID": "run_id",
+        "Environment": "environment",
+        "Seed": "seed",
+        "Number of Agents": "num_agents",
+        "Algorithm": "algorithm",
+        "Steps": "steps",
+        "Batch Size": "batch_size",
+        "Buffer Size": "buffer_size",
+        "Learning Rate": "learning_rate",
+        "Epochs": "epochs",
+        "Total Time": "total_time",
+        "Average CPU": "average_cpu",
+        "Average RAM": "average_ram",
+        "Step Interval (Running Mean)": "step_interval",
+        "Mean Policy Reward": "reward_mean",
+        "Mean Policy Reward (start step)": "reward_mean_step",
+        "Mean Policy Loss": "p_loss_mean",
+        "Mean Policy Loss (start step)": "p_loss_mean_step",
+        "Mean Value Loss": "v_loss_mean",
+        "Mean Value Loss (start step)": "v_loss_mean_step",
+        "Mean Entropy": "entropy_mean",
+        "Mean Entropy (start step)": "entropy_mean_step",
+        "Threshold Value": "threshold_value",
+        "Steps to Threshold": "steps_to_threshold",
+        "Time to Threshold (s)": "time_to_threshold",
+        "Run Reached Threshold": "run_reached_threshold",
+        "Best Reward Before Timeout": "best_reward_before_timeout",
+        "Step Of Best Reward": "step_of_best_reward",
+    }
+
 
 def extract_metrics(run_id, log_dir, n_steps):
     event_files = glob.glob(
@@ -105,7 +137,7 @@ def monitor_system(stop_event, interval=1):
     mean_ram = sum(ram_readings) / len(ram_readings)
     return mean_cpu, mean_ram, total_time
 
-def main():
+def parse_arguments_and_load_config():
     parser = argparse.ArgumentParser(description="Run ML-Agents training with system monitoring.")
     parser.add_argument("--config", required=True, help="Path to the ML-Agents YAML config file")
     parser.add_argument("--run-id", required=True, help="Run ID for the training session")
@@ -123,11 +155,13 @@ def main():
     except Exception as e:
         print(f"[ERROR] Could not read config file '{config_file}': {e}")
 
+    return config_file, run_id, num_steps, config_data
+
+def run_training_process(config_file, run_id):
     print(f"\n Starting ML-Agents training")
     print(f"   Config file: {config_file}")
     print(f"   Run ID:      {run_id}")
 
-    # Define container for results from monitor thread
     results = {}
 
     start_time = time.time()
@@ -175,7 +209,9 @@ def main():
     total_time = time.time() - start_time
     mean_cpu, mean_ram, _ = results["metrics"]
 
-    # Analyze training results from tensorboard logs
+    return total_time, mean_cpu, mean_ram
+
+def analyze_training_results(run_id, config_file, num_steps, config_data, total_time, mean_cpu, mean_ram):
     log_dir = os.path.join(os.path.dirname(__file__), "..", "results")
     log_dir = os.path.abspath(log_dir)
     metrics = extract_metrics(run_id, log_dir, num_steps)
@@ -232,6 +268,7 @@ def main():
         "Average CPU": f"{mean_cpu:.1f}",
         "Average RAM": f"{mean_ram:.1f}",
     }
+
     if metrics:
         for key, value in metrics.items():
             if key == "Run ID":
@@ -247,6 +284,71 @@ def main():
             # Update value if key exists, else add new
             combined_data[key] = display_value
 
+    return combined_data, behavior_name, environment, total_time, log_dir
+
+def analyze_thresholds(run_id, behavior_name, environment, total_time, log_dir, combined_data):
+    thresholds_path = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")), "data", "reference_thresholds.json")
+    threshold_value = "N/A"
+    steps_to_threshold = "Not reached"
+    time_to_threshold = "Not reached"
+    try:
+        with open(thresholds_path, 'r') as f:
+            thresholds = json.load(f)
+        # Determine environment name for threshold lookup
+        env_name_for_threshold = behavior_name if behavior_name else environment
+        if env_name_for_threshold in thresholds:
+            env_threshold_entry = thresholds[environment]
+            threshold_value = env_threshold_entry["T_run"] if isinstance(env_threshold_entry, dict) else env_threshold_entry
+            # Load TensorBoard events for cumulative reward
+            event_files = glob.glob(
+                os.path.join(log_dir, run_id, "**", "events.out.tfevents.*"),
+                recursive=True
+            )
+            if event_files:
+                ea = event_accumulator.EventAccumulator(event_files[0])
+                ea.Reload()
+                try:
+                    reward_events = ea.Scalars("Environment/Cumulative Reward")
+                    if reward_events:
+                        # Sort events by step
+                        reward_events.sort(key=lambda e: e.step)
+                        # Find first step where mean reward >= threshold
+                        threshold_reached_step = None
+                        for e in reward_events:
+                            if e.value >= threshold_value:
+                                threshold_reached_step = e.step
+                                break
+                        if threshold_reached_step is not None:
+                            steps_to_threshold = threshold_reached_step
+                            # Estimate time to threshold as proportion of total steps * total time
+                            # Find first step in reward_events
+                            first_step = reward_events[0].step
+                            last_step = reward_events[-1].step
+                            total_steps = last_step - first_step if last_step > first_step else 1
+                            elapsed_ratio = (threshold_reached_step - first_step) / total_steps
+                            time_to_threshold = elapsed_ratio * total_time
+                            time_to_threshold = f"{time_to_threshold:.1f}"
+                        else:
+                            steps_to_threshold = "Not reached"
+                            time_to_threshold = "Not reached"
+                    else:
+                        print(f"[WARNING] No reward events found in TensorBoard logs for run '{run_id}'")
+                except KeyError:
+                    print(f"[WARNING] 'Environment/Cumulative Reward' tag missing in TensorBoard logs for run '{run_id}'")
+            else:
+                print(f"[WARNING] No TensorBoard event files found for run '{run_id}' to analyze threshold")
+        else:
+            print(f"[WARNING] Threshold for environment '{env_name_for_threshold}' not found in '{thresholds_path}'")
+    except FileNotFoundError:
+        print(f"[WARNING] Threshold file '{thresholds_path}' not found.")
+    except json.JSONDecodeError:
+        print(f"[WARNING] Could not parse JSON in threshold file '{thresholds_path}'.")
+
+    combined_data["Threshold Value"] = str(threshold_value)
+    combined_data["Steps to Threshold"] = str(steps_to_threshold)
+    combined_data["Time to Threshold (s)"] = str(time_to_threshold)
+
+def save_and_display_results(combined_data):
     key_width = max(len(k) for k in combined_data.keys())
     val_width = max(len(v) for v in combined_data.values())
 
@@ -265,19 +367,38 @@ def main():
     os.makedirs(data_dir, exist_ok=True)
 
     CSV_HEADERS = [
+        # Identifiers
         "run_id", "environment", "seed", "num_agents",
+
+        # Training configuration
         "algorithm", "steps", "batch_size", "buffer_size",
-        "learning_rate", "epochs", "total_time", "average_cpu",
-        "average_ram", "step_interval", "reward_mean", "reward_mean_step",
+        "learning_rate", "epochs",
+
+        # System performance
+        "total_time", "average_cpu", "average_ram",
+
+        # Tensorboard metrics
+        "step_interval", "reward_mean", "reward_mean_step",
         "p_loss_mean", "p_loss_mean_step", "v_loss_mean", "v_loss_mean_step",
-        "entropy_mean", "entropy_mean_step", "threshold_method", "threshold_value",
-        "threshold_alpha", "reference_window_last_steps", "smoothing_window", "patience_k",
-        "first_data_step", "run_reached_threshold", "best_reward_before_timeout", "step_of_best_reward",
-        "episode_success_rule", "episode_success_rate_window"
+        "entropy_mean", "entropy_mean_step",
+
+        # Threshold analysis
+        "threshold_value", "steps_to_threshold", "time_to_threshold",
+
+        # Future-fields for predictions
+        "run_reached_threshold", "best_reward_before_timeout", "step_of_best_reward"
     ]
+
 
     csv_file = os.path.join(data_dir, "combined_results.csv")
     json_file = os.path.join(data_dir, "combined_results.json")
+
+    normalized_data = {}
+    for old_key, new_key in KEY_MAPPING.items():
+        if old_key in combined_data:
+            normalized_data[new_key] = combined_data[old_key]
+        else:
+            normalized_data[new_key] = ""
 
     # Write or append to CSV
     file_exists = os.path.isfile(csv_file)
@@ -293,9 +414,10 @@ def main():
         writer = csv.DictWriter(csvfile, fieldnames=CSV_HEADERS)
         if not file_exists:
             writer.writeheader()
-        # Filter and enforce correct order
-        filtered_data = {key: combined_data.get(key, "") for key in CSV_HEADERS}
+        filtered_data = {key: normalized_data.get(key, "") for key in CSV_HEADERS}
+        print("[DEBUG] Writing row keys:", filtered_data.keys())
         writer.writerow(filtered_data)
+        print(f"[INFO] Results saved to '{csv_file}'")
 
     # Write or append to JSON
     json_data = []
@@ -309,6 +431,14 @@ def main():
     json_data.append(combined_data)
     with open(json_file, 'w') as jf:
         json.dump(json_data, jf, indent=4)
+        print(f"[INFO] Results saved to '{json_file}'")
+
+def main():
+    config_file, run_id, num_steps, config_data = parse_arguments_and_load_config()
+    total_time, mean_cpu, mean_ram = run_training_process(config_file, run_id)
+    combined_data, behavior_name, environment, total_time, log_dir = analyze_training_results(run_id, config_file, num_steps, config_data, total_time, mean_cpu, mean_ram)
+    analyze_thresholds(run_id, behavior_name, environment, total_time, log_dir, combined_data)
+    save_and_display_results(combined_data)
 
 if __name__ == "__main__":
     main()

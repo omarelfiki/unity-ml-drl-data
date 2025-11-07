@@ -57,15 +57,26 @@ except Exception as e:
 
 # === STEP 2: DEFINE VALIDATION RULES ===
 expected_columns = [
+        # Identifiers
         "run_id", "environment", "seed", "num_agents",
+
+        # Training configuration
         "algorithm", "steps", "batch_size", "buffer_size",
-        "learning_rate", "epochs", "total_time", "average_cpu",
-        "average_ram", "step_interval", "reward_mean", "reward_mean_step",
+        "learning_rate", "epochs",
+
+        # System performance
+        "total_time", "average_cpu", "average_ram",
+
+        # Tensorboard metrics
+        "step_interval", "reward_mean", "reward_mean_step",
         "p_loss_mean", "p_loss_mean_step", "v_loss_mean", "v_loss_mean_step",
-        "entropy_mean", "entropy_mean_step", "threshold_method", "threshold_value",
-        "threshold_alpha", "reference_window_last_steps", "smoothing_window", "patience_k",
-        "first_data_step", "run_reached_threshold", "best_reward_before_timeout", "step_of_best_reward",
-        "episode_success_rule", "episode_success_rate_window"
+        "entropy_mean", "entropy_mean_step",
+
+        # Threshold analysis
+        "threshold_value", "steps_to_threshold", "time_to_threshold",
+
+        # Future-fields for predictions
+        "run_reached_threshold", "best_reward_before_timeout", "step_of_best_reward"
 ]
 
 validation_issues = []

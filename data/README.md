@@ -10,27 +10,33 @@ an agent to reach a performance threshold using initial configuration and early 
 
 ### Column Dictionary
 
-| **Column**                 | **Type** | **Description**                                                 |
-|----------------------------|----------|-----------------------------------------------------------------|
-| `run_id`                   | string   | Unique identifier for a run                                     |
-| `behavior`                 | string   | Unity environment (e.g., `3DBall`, `Basic`, `Sorter`)           |
-| `seed`                     | int      | Random seed for reproducibility (`-1` indicates default/random) |
-| `num_agents`               | int      | Number of simultaneous agents/instances                         |
-| `algorithm`                | string   | DRL algorithm (e.g., `PPO`)                                     |
-| `steps`                    | int      | Completed total training steps                                  |
-| `batch_size`               | int      | Minibatch size per update                                       |
-| `buffer_size`              | int      | Experience buffer size                                          |
-| `learning_rate`            | float    | Optimizer learning rate                                         |
-| `epochs`                   | int      | Epochs per update (if applicable)                               |
-| `cpu_usage_mean`           | float    | Average CPU utilization (0–1)                                   |
-| `ram_usage_mean`           | float    | Average RAM utilization (0–1)                                   |
-| `wall_clock_time (s)`      | float    | Wall-clock time in seconds                                      |
-| `step_average`             | int      | Step interval used for computing running means                  |
-| `mean_policy_reward`       | float    | Average policy reward                                           |
-| `policy_reward_start_step` | int      | Step index where reward aggregation starts                      |
-| `mean_policy_loss`         | float    | Average policy loss                                             |
-| `policy_loss_start_step`   | int      | Step index where policy-loss aggregation starts                 |
-| `mean_value_loss`          | float    | Average value loss                                              |
-| `value_loss_start_step`    | int      | Step index where value-loss aggregation starts                  |
-| `mean_entropy`             | float    | Average policy entropy                                          |
-| `entropy_start_step`       | int      | Step index where entropy aggregation starts                     |
+| **Column**                    | **Type** | **Description**                                                 |
+|-------------------------------|----------|-----------------------------------------------------------------|
+| `run_id`                      | string   | Unique identifier for a run                                     |
+| `environment`                 | string   | Unity environment (e.g., `3DBall`, `Basic`, `Sorter`)           |
+| `seed`                        | int      | Random seed for reproducibility (`-1` indicates default/random) |
+| `num_agents`                  | int      | Number of simultaneous agents/instances                         |
+| `algorithm`                   | string   | DRL algorithm (e.g., `PPO`)                                     |
+| `steps`                       | int      | Completed total training steps                                  |
+| `batch_size`                  | int      | Minibatch size per update                                       |
+| `buffer_size`                 | int      | Experience buffer size                                          |
+| `learning_rate`               | float    | Optimizer learning rate                                         |
+| `epochs`                      | int      | Epochs per update (if applicable)                               |
+| `total_time`                  | float    | Wall-clock time in seconds                                      |
+| `average_cpu`                 | float    | Average CPU utilization (0–100)                                 |
+| `average_ram`                 | float    | Average RAM utilization (0–100)                                 |
+| `step_interval`               | int      | Step interval used for computing running means                  |
+| `reward_mean`                 | float    | Average policy reward                                           |
+| `reward_mean_step`            | int      | Step index where reward aggregation starts                      |
+| `p_loss_mean`                 | float    | Average policy loss                                             |
+| `p_loss_mean_step`            | int      | Step index where policy-loss aggregation starts                 |
+| `v_loss_mean`                 | float    | Average value loss                                              |
+| `v_loss_mean_step`            | int      | Step index where value-loss aggregation starts                  |
+| `entropy_mean`                | float    | Average policy entropy                                          |
+| `entropy_mean_step`           | int      | Step index where entropy aggregation starts                     |
+| `threshold_value`             | float    | Target reward threshold                                         |
+| `steps_to_threshold`          | int      | Step taken to reach threshold                                   |
+| `time_to_threshold`           | int      | Time in seconds to reach the threshold                          |
+| `run_reached_threshold`       | bool     | Whether the threshold was reached                               |
+| `best_reward_before_timeout`  | int      | Best policy reward reached before training timeout              |
+| `step_of_best_reward`         | int      | Step where best reward was reached                              |
