@@ -441,6 +441,7 @@ def save_and_display_results(combined_data):
         json.dump(json_data, jf, indent=4)
         print(f"[INFO] Results saved to '{json_file}'")
 
+
 def auto_commit_results(commit_message="Auto-update: new training results"):
     """Safely auto-commit updated dataset files after validation."""
     data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../data"))
@@ -450,7 +451,8 @@ def auto_commit_results(commit_message="Auto-update: new training results"):
         # Verify branch is selected branch
         branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).decode().strip()
         if branch != AUTO_COMMIT_BRANCH:
-            print(f"[WARNING] Current branch is '{branch}', not '{AUTO_COMMIT_BRANCH}'")
+            print(f"[WARNING] Current branch is '{branch}', not designated auto commit branch '{AUTO_COMMIT_BRANCH}'")
+            print(f"[INFO] To change to auto-commit branch, run 'git checkout {AUTO_COMMIT_BRANCH}'")
             print(f"[WARNING] Aborting auto-commit.")
             return
 
@@ -458,7 +460,7 @@ def auto_commit_results(commit_message="Auto-update: new training results"):
         status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True)
         status_lines = status.stdout.strip().splitlines()
 
-        def _should_ignore_porcelain(line: str) -> bool:
+        def _should_ignore(line: str) -> bool:
             if not line:
                 return True
             # Porcelain format: two status chars + space + path
@@ -474,17 +476,20 @@ def auto_commit_results(commit_message="Auto-update: new training results"):
             # Allow dataset result files to be dirty (staged or unstaged)
             allowed_dirty = ["data/combined_results.csv", "data/combined_results.json"]
             for allowed in allowed_dirty:
-                if allowed in raw_path:
+                if allowed in line or allowed in raw_path:
                     return True
             print(f"[WARNING] Unrecognized porcelain line: {line}")
             return False
 
-        dirty_changes = [ln for ln in status_lines if not _should_ignore_porcelain(ln)]
+        dirty_changes = [ln for ln in status_lines if not _should_ignore(ln)]
 
         if any(ln.strip() for ln in dirty_changes):
-            print("[WARNING] Working directory not clean (excluding results files). Please commit or stash your changes before training.")
+            print(
+                "[WARNING] Working directory not clean (excluding results files). Please commit or stash your changes before training.")
             print(f"[WARNING] Aborting auto-commit.")
             return
+        else:
+            print("[INFO] Working directory clean of other changes (excluding results files).")
 
         # Ensure up to date with origin
         subprocess.run(["git", "fetch", "origin"], check=True)
