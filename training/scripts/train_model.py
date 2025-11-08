@@ -461,7 +461,7 @@ def auto_commit_results(commit_message="Auto-update: new training results"):
         def _should_ignore_porcelain(line: str) -> bool:
             if not line:
                 return True
-            # Porcelain format: two status chars + "" + path
+            # Porcelain format: two status chars + space + path
             xy = line[:2]
             raw_path = line[3:].strip()
             if " -> " in raw_path:
@@ -472,15 +472,16 @@ def auto_commit_results(commit_message="Auto-update: new training results"):
             if xy == "??":
                 return True
 
-            # Allow the result files to be dirty (staged or unstaged)
+            # Allow dataset result files to be dirty (staged or unstaged)
             allowed_dirty = {
-                os.path.normpath(os.path.join("data", "combined_results.csv")),
-                os.path.normpath(os.path.join("data", "combined_results.json")),
+                os.path.normpath("data/combined_results.csv"),
+                os.path.normpath("data/combined_results.json"),
             }
-            if path_rel in allowed_dirty:
-                return True
+            # Check if file path matches or is relative inside project
+            for allowed in allowed_dirty:
+                if path_rel.endswith(allowed) or path_rel == allowed:
+                    return True
 
-            print(f"[WARNING] Unrecognized porcelain line: {line}")
             return False
 
         dirty_changes = [ln for ln in status_lines if not _should_ignore_porcelain(ln)]
