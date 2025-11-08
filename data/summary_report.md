@@ -5,37 +5,15 @@ Summary of training run results.
 
 ---
 ## Overview Statistics
-- **Total Runs:** 20
-- **Unique Environments:** 5
+- **Total Runs:** 24
+- **Unique Environments:** N/A
 
 ### Key Metrics (Averages)
-| Metric                     | Average Value     |
-| :------------------------- | :---------------- |
-| Steps                      | 325,000.00        |
-| Batch Size                 | 246.40            |
-| Buffer Size                | 14,144.00         |
-| Learning Rate              | 0.00              |
-| Epochs                     | 3.00              |
-| Total Time (S)             | 568.00            |
-| Average Cpu (%)            | 170.10            |
-| Average Ram (%)            | 9.31              |
-| Mean Policy Reward         | 1,000.31          |
-| Mean Policy Loss           | 2,000.09          |
-| Mean Value Loss            | 2,666.77          |
-| Mean Entropy               | 1,001.59          |
-| Threshold Steps            | N/A (No valid data) |
-| Threshold Time (S)         | N/A (No valid data) |
-
+_No average metrics calculated._
 
 ---
 ## Recent Runs (Last 5)
-| Environment   | Mean Policy Reward   |   Total Time (s) | Steps     | Average CPU (%)   |
-|:--------------|:---------------------|-----------------:|:----------|:------------------|
-| 3DBall        | 0.10                 |             74.4 | 500,000   | 356.00            |
-| Hallway       | 0.26                 |             79.8 | 1,000,000 | 1,272.00          |
-| Crawler       | 0.01                 |             80   | 1,000,000 | 1,418.00          |
-| Sorter        | N/A                  |            255   | 50,000    | 0.24              |
-| Sorter        | -0.81                |            150   | 50,000    | 0.58              |
+_No recent runs to display._
 
 ---
 ## Trend Plots

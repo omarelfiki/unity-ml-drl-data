@@ -13,6 +13,8 @@ Inside your virtual enviroment created earlier, run from ```/training```:
 
     python scripts/train_model.py --config configs_official/3DBall.yaml --run-id ball_test_001
 
+> Hint: Use the ```-ac``` flag on your training command to enable auto-commit to a data collection branch
+> 
 > Replace ```configs_official/3DBall.yaml``` with the path to your training configuration file and  ```ball_test_001``` with a unique run ID for your training run. Check the contributing guidelines for naming conventions.
      
 You should see output like this:

@@ -1,4 +1,4 @@
-name: Generate Summary Report
+name: Data Analysis, Validation, and Threshold Updates
 
 on:
   push:
@@ -11,11 +11,11 @@ permissions:
   contents: write
 
 jobs:
-  build-summary:
+  generate-report:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -28,15 +28,21 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pandas tabulate matplotlib
+          pip install pandas tabulate matplotlib numpy pathlib
 
       - name: Generate summary report
         run: python training/scripts/results_summary.py
 
-      - name: Commit & Push summary
+      - name: Generate thresholds
+        run: python training/scripts/compute_threshold.py
+
+      - name: Run validation script
+        run: python training/scripts/validate_results.py
+
+      - name: Commit & push all updates
         uses: actions-js/push@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref_name }}
-          message: "Auto-update summary report [skip ci]"
+          message: "Auto-update summaries and thresholds [skip ci]"
           directory: .
