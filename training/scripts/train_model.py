@@ -480,6 +480,7 @@ def auto_commit_results(commit_message="Auto-update: new training results"):
             if path_rel in allowed_dirty:
                 return True
 
+            print(f"[WARNING] Unrecognized porcelain line: {line}")
             return False
 
         dirty_changes = [ln for ln in status_lines if not _should_ignore_porcelain(ln)]
