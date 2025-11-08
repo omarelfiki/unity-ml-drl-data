@@ -1,3 +1,6 @@
+# Summary and Validation
+```summary_report.md``` and ```validation_report.md``` provide a glance on results with plots and data validation checks.
+
 # Understanding Results
 
 ### Research Question
@@ -6,7 +9,7 @@ an agent to reach a performance threshold using initial configuration and early 
 
 #### Targets (to predict)
 * Wall clock time (s) (observed seconds).
-* Time-to-threshold (derived) from per-step reward logs: steps/time to reach a target reward 
+* Time-to-threshold (derived) from per-step reward logs: steps/time to reach a target reward.
 
 ### Column Dictionary
 
