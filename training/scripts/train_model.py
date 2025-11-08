@@ -466,20 +466,15 @@ def auto_commit_results(commit_message="Auto-update: new training results"):
             raw_path = line[3:].strip()
             if " -> " in raw_path:
                 raw_path = raw_path.split(" -> ", 1)[-1].strip()
-            path_rel = os.path.normpath(raw_path)
 
             # Ignore untracked files entirely
             if xy == "??":
                 return True
 
             # Allow dataset result files to be dirty (staged or unstaged)
-            allowed_dirty = {
-                os.path.normpath("data/combined_results.csv"),
-                os.path.normpath("data/combined_results.json"),
-            }
-            # Check if file path matches or is relative inside project
+            allowed_dirty = ["data/combined_results.csv", "data/combined_results.json"]
             for allowed in allowed_dirty:
-                if path_rel.endswith(allowed) or path_rel == allowed:
+                if allowed in raw_path:
                     return True
             print(f"[WARNING] Unrecognized porcelain line: {line}")
             return False
