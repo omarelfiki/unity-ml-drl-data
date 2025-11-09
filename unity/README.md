@@ -15,4 +15,4 @@ Example: ```Assets/ML-Agents/Examples/3DBall/Scenes/3DBall.unity```
 
 ### Run the training without graphics
 
-```python scripts/train_model.py --config configs_official/3DBall.yaml --headless "destination to file build file .exe" --run-id ball_test_01```
+```python scripts/train_model.py --config configs_official/3DBall.yaml --headless "destination to build file .exe" --run-id ball_test_01```
