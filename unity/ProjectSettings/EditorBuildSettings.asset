@@ -5,8 +5,59 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/ML-Agents/Examples/3DBall/Scenes/3DBall.unity
     guid: b9ac0cbf961bf4dacbfa0aa9c0d60aaa
+  - enabled: 0
+    path: Assets/ML-Agents/Examples/Basic/Scenes/Basic.unity
+    guid: cf1d119a8748d406e90ecb623b45f92f
+  - enabled: 0
+    path: Assets/ML-Agents/Examples/Crawler/Scenes/Crawler.unity
+    guid: 7ada20f4d7ae04f2d946cac21135ecbd
+  - enabled: 0
+    path: Assets/ML-Agents/Examples/DungeonEscape/Scenes/DungeonEscape.unity
+    guid: d00d2995d83c94f5da81bb19644a00ac
+  - enabled: 0
+    path: Assets/ML-Agents/Examples/FoodCollector/Scenes/FoodCollector.unity
+    guid: 74aeee1f5073c4998840fc784793f1ef
+  - enabled: 0
+    path: Assets/ML-Agents/Examples/FoodCollector/Scenes/VisualFoodCollector.unity
+    guid: dbc5c542957ef47bd8ebe87fc1000c37
+  - enabled: 0
+    path: Assets/ML-Agents/Examples/GridWorld/Scenes/GridWorld.unity
+    guid: c6fdbb551d80c435abe6fc911b1ea11f
+  - enabled: 0
+    path: Assets/ML-Agents/Examples/Hallway/Scenes/Hallway.unity
+    guid: d6d6a33ed0e18459a8d61817d600978a
+  - enabled: 0
+    path: Assets/ML-Agents/Examples/Match3/Scenes/Match3.unity
+    guid: 2e09c5458f1494f9dad9cd6d09dff964
+  - enabled: 0
+    path: Assets/ML-Agents/Examples/PushBlock/Scenes/PushBlock.unity
+    guid: ae8cc75939e3e4d07a79c8c6a08b54f4
+  - enabled: 0
+    path: Assets/ML-Agents/Examples/PushBlock/Scenes/PushBlockCollab.unity
+    guid: b9c81cbb0f0ac40649eddfef0971e81b
+  - enabled: 0
+    path: Assets/ML-Agents/Examples/Pyramids/Scenes/Pyramids.unity
+    guid: 35afbc150a44b4aa69ca04685486b5c4
+  - enabled: 0
+    path: Assets/ML-Agents/Examples/Soccer/Scenes/SoccerTwos.unity
+    guid: f8055e5dfa04643559678426a82225c1
+  - enabled: 0
+    path: Assets/ML-Agents/Examples/Soccer/Scenes/StrikersVsGoalie.unity
+    guid: 9b4d2e53a4f424f99abdf2c214a50435
+  - enabled: 0
+    path: Assets/ML-Agents/Examples/Sorter/Scenes/Sorter.unity
+    guid: f23c5f09c95ad48768a41974a2f1523c
+  - enabled: 0
+    path: Assets/ML-Agents/Examples/Walker/Scenes/Walker.unity
+    guid: 2b839ee93e7a4467f9f8b4803c4a239b
+  - enabled: 0
+    path: Assets/ML-Agents/Examples/WallJump/Scenes/WallJump.unity
+    guid: 56024e8d040d344709949bc88128944d
+  - enabled: 0
+    path: Assets/ML-Agents/Examples/Worm/Scenes/Worm.unity
+    guid: 2d569bb9615d8480f82ec9eab5fb4cf2
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
