@@ -142,12 +142,14 @@ def parse_arguments_and_load_config():
     parser.add_argument("--config", required=True, help="Path to the ML-Agents YAML config file")
     parser.add_argument("--run-id", required=True, help="Run ID for the training session")
     parser.add_argument("--num-steps", type=int, default=N_STEPS, help="Number of steps to monitor")
+    parser.add_argument("--headless", dest="env_path", required=False, help="Path to the build so it can train headless (no graphics)")
     parser.add_argument("--ac", action="store_true", help="Activate auto-commit")
     args = parser.parse_args()
 
     config_file = args.config
     run_id = args.run_id
     num_steps = args.num_steps
+    env_path = args.env_path
     ac = args.ac
     if ac:
         print(f"[INFO]: Auto-commit activated for run: '{run_id}'")
@@ -161,12 +163,17 @@ def parse_arguments_and_load_config():
     except Exception as e:
         print(f"[ERROR] Could not read config file '{config_file}': {e}")
 
-    return config_file, run_id, num_steps, config_data, ac
+    return config_file, run_id, num_steps, config_data, ac, env_path
 
-def run_training_process(config_file, run_id):
+def run_training_process(config_file, run_id, env_path):
     print(f"\n Starting ML-Agents training")
     print(f"   Config file: {config_file}")
     print(f"   Run ID:      {run_id}")
+    
+    if env_path:
+        print(f"   Env build:   {env_path}")
+    else:
+        print("   Env build:   Connected to Unity Editor")
 
     results = {}
 
@@ -178,8 +185,11 @@ def run_training_process(config_file, run_id):
 
     try:
         # --- Launch ML-Agents training ---
+        cmd = ["mlagents-learn", config_file, "--run-id", run_id, "--force", "--no-graphics"]
+        if env_path:
+            cmd.extend(["--env", env_path])
         process = subprocess.Popen(
-            ["mlagents-learn", config_file, "--run-id", run_id, "--force"],
+            cmd,
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
         )
 
@@ -523,8 +533,8 @@ def auto_commit_results(commit_message="Auto-update: new training results"):
         print(f"[ERROR] Unexpected error: {e}")
 
 def main():
-    config_file, run_id, num_steps, config_data, ac = parse_arguments_and_load_config()
-    total_time, mean_cpu, mean_ram = run_training_process(config_file, run_id)
+    config_file, run_id, num_steps, config_data, ac, env_path = parse_arguments_and_load_config()
+    total_time, mean_cpu, mean_ram = run_training_process(config_file, run_id, env_path)
     combined_data, behavior_name, environment, total_time, log_dir = analyze_training_results(run_id, config_file, num_steps, config_data, total_time, mean_cpu, mean_ram)
     analyze_thresholds(run_id, behavior_name, environment, total_time, log_dir, combined_data)
     save_and_display_results(combined_data)
