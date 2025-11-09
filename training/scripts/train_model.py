@@ -169,7 +169,11 @@ def run_training_process(config_file, run_id, env_path):
     print(f"\n Starting ML-Agents training")
     print(f"   Config file: {config_file}")
     print(f"   Run ID:      {run_id}")
-    print(f"   Env build:   {env_path}")
+    
+    if env_path:
+        print(f"   Env build:   {env_path}")
+    else:
+        print("   Env build:   Connected to Unity Editor")
 
     results = {}
 
