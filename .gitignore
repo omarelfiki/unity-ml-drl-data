@@ -111,3 +111,4 @@ training/venv/
 training/results/
 unity/Assets/ML-Agents/Timers/
 training/configs_backup/
+/training/executables/
