@@ -104,3 +104,5 @@ InitTestScene*.unity*
 
 # EditorBuildSettings
 /[Pp]rojectSettings/EditorBuildSettings.asset
+
+/Assets/ML-Agents/Timers/
