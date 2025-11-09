@@ -15,7 +15,7 @@ Inside your virtual enviroment created earlier, run from ```/training```:
 
 > Hint 1: Use the ```-ac``` flag on your training command to enable auto-commit to a data collection branch
 > 
-> Hint 2:Use the ```-headless``` flag on your training command to activate headless mode (no graphics require to run the training)
+> Hint 2: Use the ```-headless``` flag on your training command to activate headless mode (no graphics require to run the training)
 > 
 > Replace ```configs_official/3DBall.yaml``` with the path to your training configuration file and  ```ball_test_001``` with a unique run ID for your training run. Check the contributing guidelines for naming conventions.
      

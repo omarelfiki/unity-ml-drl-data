@@ -4,7 +4,7 @@ A way to train the model without opening Unity Editor, just run the code in the 
 
 ### Unity Editor
 
-**Open an Enviroment in Unity**
+- Open an Enviroment in Unity
 
 Example: ```Assets/ML-Agents/Examples/3DBall/Scenes/3DBall.unity```
 
