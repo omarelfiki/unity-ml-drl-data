@@ -42,9 +42,11 @@ jobs:
           echo "Copied combined_results.csv to Group 6 folder."
 
       - name: Commit and push updated results to fork
-        uses: actions-js/push@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
-          message: "Auto-update: Group 6 combined_results.csv"
-          directory: ./shared_repo
+        run: |
+          cd shared_repo
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "Group 6/combined_results.csv"
+          git commit -m "Auto-update: Group 6 combined_results.csv" || echo "No changes to commit"
+          git pull --rebase origin main || echo "No remote changes"
+          git push https://x-access-token:${{ secrets.UPSTREAM_PAT }}@github.com/Ashour777/BCS2720-project-data-collection-2025-2026.git main
