@@ -1,8 +1,8 @@
 name: Sync Data to Shared Repository
 
 on:
-  #  schedule:
-  #    - cron: "0 */6 * * *"   # Every 6 hours
+  schedule:
+    - cron: "0 17 * * *"
   workflow_dispatch:
 
 permissions:
