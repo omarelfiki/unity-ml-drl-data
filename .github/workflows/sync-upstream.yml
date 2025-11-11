@@ -1,0 +1,71 @@
+name: Sync Data to Shared Repository
+
+on:
+#  schedule:
+#    - cron: "0 */6 * * *"   # Every 6 hours
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout team training repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify combined_results.csv exists
+        run: |
+          if [ ! -f "data/combined_results.csv" ]; then
+            echo "No combined_results.csv found. Exiting."
+            exit 1
+          fi
+          echo "Found data/combined_results.csv"
+
+      - name: Clone the shared dataset fork
+        run: |
+          git clone "https://github.com/Ashour777/BCS2720-project-data-collection-2025-2026.git" shared_repo
+          cd shared_repo
+          git remote add upstream "https://github.com/DennisSoemers/BCS2720-project-data-collection-2025-2026.git"
+          git fetch upstream
+          git checkout main
+          git pull upstream main
+
+      - name: Copy updated results to Group 6
+        run: |
+          cp "data/combined_results.csv" "shared_repo/Group 6/combined_results.csv"
+          echo "Copied combined_results.csv to Group 6 folder."
+
+      - name: Commit and push updated results to fork
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+          message: "Auto-update: Group 6 combined_results.csv"
+          directory: ./shared_repo
+
+#      - name: Create or update PR to upstream
+#        uses: peter-evans/create-pull-request@v7
+#        with:
+#          token: ${{ secrets.UPSTREAM_PAT }}   # PAT with repo + workflow scopes
+#          repository: DennisSoemers/BCS2720-project-data-collection-2025-2026
+#          title: "Group 6 Data Sync — Automated CSV Update"
+#          body: |
+#            This PR syncs the latest `combined_results.csv` from the Group 6 training repository
+#            into the shared dataset repository.
+#
+#            This PR will be automatically updated whenever new data is pushed.
+#          commit-message: "Auto-sync: Group 6 combined_results.csv"
+#          branch: group6-sync           # PR head branch (created/updated on upstream)
+#          base: main                    # PR base branch on upstream
+#          add-paths: |
+#            Group 6/combined_results.csv
+#          signoff: true
+#          delete-branch: false
+#          draft: false
+#          update-existing: true
