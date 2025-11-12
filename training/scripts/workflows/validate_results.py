@@ -1,3 +1,12 @@
+"""
+Generates a Markdown validation report for training runs.
+
+Reads data/combined_results.csv, and validates data on values, ranges and types.
+
+Dependency for Github Actions workflows on repo.
+"""
+
+
 # === Imports ===
 import pandas as pd
 import json
@@ -16,7 +25,8 @@ log("=== Starting Validation Process ===")
 start_time = time.time()
 
 # === PATH SETUP ===
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..', '..', '..'))
 data_dir = os.path.join(project_root, "data")
 csv_path = os.path.join(data_dir, "combined_results.csv")
 json_path = os.path.join(data_dir, "combined_results.json")
@@ -92,7 +102,7 @@ if not df.empty:
 
     check_range("average_cpu", 0, 100)
     check_range("average_ram", 0, 100)
-    check_threshold_versions("threshold_version");
+    check_threshold_versions("threshold_version")
 
     # Type consistency check
     for col in ["total_time", "reward_mean"]:

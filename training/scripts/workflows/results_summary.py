@@ -5,7 +5,7 @@ Reads data/combined_results.csv, calculates stats (mean, std),
 creates plots, finds insights/anomalies, and writes the report
 to data/summary_report.md.
 
-DO NOT CHANGE FILE NAME OR LOCATION. Dependency for Github Actions.
+Dependency for Github Actions workflows on repo.
 """
 
 import pandas as pd
@@ -13,7 +13,6 @@ import matplotlib.pyplot as plt
 import base64
 import os
 from datetime import datetime
-import io
 
 # CSV Header Definition
 CSV_HEADERS = [
@@ -48,7 +47,7 @@ log("=== Starting Summary Generation ====")
 
 # Configuration and Paths
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..', '..'))
+project_root = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..', '..', '..'))
 data_dir = os.path.join(project_root, 'data')
 csv_path = os.path.join(data_dir, 'combined_results.csv')
 summary_md = os.path.join(data_dir, 'summary_report.md')
