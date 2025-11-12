@@ -32,10 +32,10 @@ jobs:
           cd training
 
       - name: Generate summary report
-        run: python -m scripts.workflows.results_summary
+        run: python training/scripts/workflows/results_summary.py
 
       - name: Run validation script
-        run: python -m scripts.workflows.validate_results
+        run: python training/scripts/workflows/validate_results.py
 
       - name: Commit & push all updates
         uses: actions-js/push@master

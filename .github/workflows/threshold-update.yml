@@ -26,7 +26,7 @@ jobs:
           cd training
 
       - name: Generate thresholds
-        run: python -m training.scripts.compute_threshold
+        run: python training/scripts/workflows/compute_threshold.py
 
       - name: Commit & push all updates
         uses: actions-js/push@master
