@@ -1,7 +1,19 @@
-# "Train Model" Version 2.5
-# Created by AIML 6 2024-2025 (Maastricht University
-# Usage
-# python train_model.py --config [config.yaml] --run-id [naming_convention] (optional: --num-steps [int])
+"""
+ML-Agents Training Runner Version 2.5
+Created by AIML 6 2024-2025 (Maastricht University - DACS P2-1: Artificial Intelligence and Machine Learning)
+
+usage: train_model.py [-h] --config CONFIG --run-id RUN_ID [--num-steps NUM_STEPS] [--headless ENV_PATH] [--ac] [--seed SEED] [--no-thresholds] [--verbose]
+options:
+  -h, --help            show this help message and exit
+  --config              Path to the ML-Agents YAML config file
+  --run-id              Run ID for the training session
+  --num-steps           (Optional) Number of steps to monitor. Uses configured value if not provided
+  --headless            (Optional) Path to the build so it can train headless (no graphics)
+  --ac                  (Optional) Activate auto-commit
+  --seed                (Optional) Seed used for data replication
+  --no-thresholds       (Optional) Disable thresholds for this run
+  -v, --verbose         (Optional) Enable verbose mlagents-learn output
+"""
 
 import re
 import shutil
@@ -177,7 +189,7 @@ def parse_arguments() -> TrainingArgs:
     parser.add_argument("--ac", action="store_true", help="(Optional) Activate auto-commit")
     parser.add_argument("--seed", type=int, help="(Optional) Seed used for data replication")
     parser.add_argument("--no-thresholds", action="store_true", help="(Optional) Disable thresholds for this run")
-    parser.add_argument("--verbose", action="store_true", help="(Optional) Enable verbose mlagents-learn output")
+    parser.add_argument("-v", "--verbose", action="store_true", help="(Optional) Enable verbose mlagents-learn output")
     args = parser.parse_args()
 
     return TrainingArgs(
