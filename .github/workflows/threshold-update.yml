@@ -23,7 +23,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pandas tabulate matplotlib numpy pathlib
-          cd training
 
       - name: Generate thresholds
         run: python training/scripts/workflows/compute_threshold.py
