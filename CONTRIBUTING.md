@@ -3,11 +3,6 @@
 This document outlines the guidelines for making contributions to ensure consistency and maintain code quality. Please review it carefully before submitting your work.
 &nbsp;
 
-## Prerequisites
-All development must be done using the following software versions to ensure project compatibility:
-* **Unity Editor:** `2023.2.12f1`
-* **Python:** `3.10.12` (preferred) or `3.10.11`.
-
 ## Contribution Workflow
 This project utilizes the Fork & Pull Request workflow for all code contributions.
 
@@ -80,8 +75,8 @@ This helps with :
 * Prevents merge conflicts
 
 
-## Training Runs Naming convention 
-Every group member must follow this naming convention when they start a training run.
+## Training Runs Naming Convention 
+Contributors must follow this naming convention when they start a training run.
 
 X_Y_E(_A)
 
@@ -90,6 +85,3 @@ X_Y_E(_A)
 * E = the name of the enviroment you are training on (eg. Basic)
 * A = Optional (if running the same enviroment multiple times in one day)
 Example of file name: **LF_100125_Basic_1**
-
-The file on tensorboard will look like the following, LF_100125_Basic_1/Basic (/Basic will be filled out automatically dependning on the training scene you choose)
-

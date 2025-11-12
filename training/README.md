@@ -11,20 +11,20 @@ Example: ```Assets/ML-Agents/Examples/3DBall/Scenes/3DBall.unity```
 
 Inside your virtual enviroment created earlier, run from ```/training```:
 
-    python scripts/train_model.py --config configs_official/3DBall.yaml --run-id ball_test_001
+    python -m scripts.train_model --config configs_official/3DBall.yaml --run-id ball_test_001
 
 > Hint 1: Use the ```-ac``` flag on your training command to enable auto-commit to a data collection branch
 > 
 > Hint 2: Use the ```-headless``` flag on your training command to activate headless mode (no graphics require to run the training)
+>
+> Other settings and flags can be found in the -h/--help call
 > 
 > Replace ```configs_official/3DBall.yaml``` with the path to your training configuration file and  ```ball_test_001``` with a unique run ID for your training run. Check the contributing guidelines for naming conventions.
      
 You should see output like this:
 
-     Starting ML-Agents training
-     Config file: configs_edited/basic.yaml
-     Run ID:      OE_081025
-     Launching ML-Agents... please wait.
+     | ML-Agents Training Runner V2.5 by AIML 6 - Maastricht University DACS Project 2-1: Artificial Intelligence and Machine Learning |
+     | Run ID: OE_TEST_3DBall  •  Config: 3DBall.yaml  •  Auto-commit: ON  •  Env: executables/3DBall.app  •  Seed: 10  •  Steps: 12000  •  Thresholds: OFF  •  Started: 2025-11-12 22:02:22  •  Verbose: False |
     
 
    > If you have exited your virtual environment you can access it again by running:

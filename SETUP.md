@@ -10,7 +10,7 @@ cd unity-ml-drl-data
 * Install recommended Unity Editor version: 2023.2.12f1
 * Open the ```/unity``` folder as a Unity project.
 
-**3. Set up Python enviroment (Python 3.10.12)**   
+**3. Set up Python environment (Python 3.10.12)**   
 From the root of the repository:
 ```
 cd training
@@ -23,7 +23,7 @@ This will:
 
 > Ensure you have Python 3.10.12 available (via pyenv, conda, or system Python).
 
-### Windows Python Version Note
+## Windows Python Version Note
 Some Windows users reported issues installing **Python 3.10.12** (the version officially required by ML-Agents).  
 If you encounter errors during installation, try instead:
 
