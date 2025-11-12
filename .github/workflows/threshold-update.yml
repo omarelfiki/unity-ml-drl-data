@@ -1,3 +1,5 @@
+name: Update Empirical Thresholds
+
 on:
   workflow_dispatch:
 
