@@ -1,7 +1,7 @@
 """Configuration constants for ML-Agents training runner."""
 
 VERSION = "2.5"
-AUTO_COMMIT_BRANCH = "main"
+AUTO_COMMIT_BRANCH = "refactor"
 N_STEPS = 12000
 
 TAGS = {
