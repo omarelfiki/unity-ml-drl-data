@@ -1,10 +1,4 @@
-name: Data Analysis, Validation
-
 on:
-  push:
-    paths:
-      - "data/combined_results.csv"
-      - "data/combined_results.json"
   workflow_dispatch:
 
 permissions:
@@ -30,16 +24,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install pandas tabulate matplotlib numpy pathlib
 
-      - name: Generate summary report
-        run: python training/scripts/results_summary.py
-
-      - name: Run validation script
-        run: python training/scripts/validate_results.py
+      - name: Generate thresholds
+        run: python training/scripts/compute_threshold.py
 
       - name: Commit & push all updates
         uses: actions-js/push@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref_name }}
-          message: "Auto-update summaries and validation [skip ci]"
+          message: "Auto-update thresholds (manual) [skip ci]"
           directory: .
