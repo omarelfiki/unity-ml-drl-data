@@ -6,9 +6,9 @@ import numpy as np
 import yaml
 from tensorboard.backend.event_processing import event_accumulator
 
-from scripts.config.args import TrainingArgs
+
 from scripts.config.constants import TAGS
-from scripts.models.data_models import TrainingResult
+from scripts.models.data_models import TrainingResult, TrainingArgs
 
 
 class MetricsAnalyzer:
