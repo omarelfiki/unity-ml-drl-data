@@ -26,7 +26,7 @@ start_time = time.time()
 
 # === PATH SETUP ===
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..', '..', '..'))
+project_root = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..', '..'))
 data_dir = os.path.join(project_root, "data")
 csv_path = os.path.join(data_dir, "combined_results.csv")
 json_path = os.path.join(data_dir, "combined_results.json")
