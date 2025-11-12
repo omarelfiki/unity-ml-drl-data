@@ -48,7 +48,7 @@ log("=== Starting Summary Generation ====")
 
 # Configuration and Paths
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..'))
+project_root = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..', '..'))
 data_dir = os.path.join(project_root, 'data')
 csv_path = os.path.join(data_dir, 'combined_results.csv')
 summary_md = os.path.join(data_dir, 'summary_report.md')

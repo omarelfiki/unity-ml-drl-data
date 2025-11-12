@@ -23,9 +23,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pandas tabulate matplotlib numpy pathlib
+          cd training
 
       - name: Generate thresholds
-        run: python training/scripts/compute_threshold.py
+        run: python -m training.scripts.compute_threshold
 
       - name: Commit & push all updates
         uses: actions-js/push@master

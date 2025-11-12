@@ -1,5 +1,5 @@
 """
-Compute empirical reward thresholds per environment by parsing a shared CSV dataset.
+Computing empirical reward thresholds per environment by parsing the CSV dataset.
 """
 
 import json
@@ -8,8 +8,8 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 
-DATA_FILE = Path(__file__).resolve().parent.parent.parent / "data" / "combined_results.csv"
-THRESHOLDS_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "thresholds"
+DATA_FILE = Path(__file__).resolve().parent.parent.parent.parent / "data" / "combined_results.csv"
+THRESHOLDS_DIR = Path(__file__).resolve().parent.parent.parent.parent / "data" / "thresholds"
 
 # Default Parameters
 TAIL_STEPS_DEFAULT = 50_000
