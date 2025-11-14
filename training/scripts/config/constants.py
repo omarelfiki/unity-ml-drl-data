@@ -21,7 +21,7 @@ CSV_HEADERS = [
     "entropy_mean", "entropy_mean_step",
     "threshold_value", "steps_to_threshold", "time_to_threshold",
     "threshold_version", "run_reached_threshold",
-    "best_reward_before_timeout", "step_of_best_reward"
+    "best_reward_before_timeout", "step_of_best_reward", "notes"
 ]
 
 KEY_MAPPING = {
