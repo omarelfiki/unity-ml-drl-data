@@ -5,10 +5,8 @@ import os
 import numpy as np
 import yaml
 from tensorboard.backend.event_processing import event_accumulator
-
-
-from scripts.config.constants import TAGS
 from scripts.models.data_models import TrainingResult, TrainingArgs
+from scripts.config.constants import get_n_steps_for_env, TAGS, get_early_window_for_env, get_final_window_for_env
 
 
 class MetricsAnalyzer:
@@ -19,7 +17,12 @@ class MetricsAnalyzer:
         v = self.args.verbose
         log_dir = os.path.join(os.path.dirname(__file__),".." ,"..", "results")
         log_dir = os.path.abspath(log_dir)
-        metrics = self.extract_tensorboard_metrics(self.args.run_id, log_dir, self.args.num_steps)
+        env_name = os.path.splitext(os.path.basename(self.args.config))[0]
+        if self.args.num_steps is not None:
+            num_steps = self.args.num_steps
+        else:
+            num_steps = get_n_steps_for_env(env_name)
+        metrics = self.extract_tensorboard_metrics(log_dir, num_steps)
         environment = os.path.splitext(os.path.basename(self.args.config))[0]
 
         # Load generated configuration files after training
@@ -116,7 +119,7 @@ class MetricsAnalyzer:
                     ea = event_accumulator.EventAccumulator(event_files[0])
                     ea.Reload()
                     try:
-                        reward_events = ea.Scalars("Environment/Cumulative Reward")
+                        reward_events = ea.Scalars("Policy/Extrinsic Reward")
                         if reward_events:
                             # Sort events by step
                             reward_events.sort(key=lambda el: el.step)
@@ -159,27 +162,72 @@ class MetricsAnalyzer:
         result.combined_data["Time to Threshold (s)"] = str(time_to_threshold)
         result.combined_data["Threshold Version"] = str(thresholds_file["version"])
 
-    def extract_tensorboard_metrics(self, run_id, log_dir, n_steps):
+    def extract_tensorboard_metrics(self, log_dir, n_steps):
+        run_id = self.args.run_id
+        environment = os.path.splitext(os.path.basename(self.args.config))[0]
         event_files = glob.glob(
             os.path.join(log_dir, run_id, "**", "events.out.tfevents.*"),
-            recursive=True
+            recursive=True,
         )
+
         if not event_files:
             print(f"[WARNING] No TensorBoard logs found for run '{run_id}'")
-            # Return all metrics with None to ensure table consistency
-            return {label: None for label in TAGS.values()} | {
-                f"{label} (start step)": None for label in TAGS.values()
-            } | {"Run ID": run_id}
+            return {"Run ID": run_id}
 
         ea = event_accumulator.EventAccumulator(event_files[0])
         ea.Reload()
 
         metrics = {"Run ID": run_id}
+        try:
+            reward_events = ea.Scalars("Environment/Cumulative Reward")
+        except KeyError:
+            reward_events = []
+
+        if reward_events:
+            reward_events.sort(key=lambda e: e.step)
+
+            steps = np.array([e.step for e in reward_events])
+            values = np.array([e.value for e in reward_events])
+
+            first = steps.min()
+            last = steps.max()
+
+            # Window for reward_mean
+            mask = (steps >= first) & (steps <= first + n_steps)
+            metrics["Mean Policy Reward"] = float(values[mask].mean()) if np.any(mask) else None
+            metrics["Mean Policy Reward (start step)"] = int(first)
+
+            # Early window
+            early_window = get_early_window_for_env(environment)
+            early_mask = (steps >= first) & (steps <= first + early_window)
+            metrics["Early Reward Mean"] = float(values[early_mask].mean()) if np.any(early_mask) else None
+            metrics["Early Reward Mean (start step)"] = int(first)
+
+            # Final window
+            final_window = get_final_window_for_env(environment)
+            final_mask = (steps >= max(first, last - final_window)) & (steps <= last)
+            metrics["Final Reward Mean"] = float(values[final_mask].mean()) if np.any(final_mask) else None
+            metrics["Final Reward Mean (start step)"] = int(max(first, last - final_window))
+
+            # Best reward
+            idx = np.argmax(values)
+            metrics["Best Reward"] = float(values[idx])
+            metrics["Best Reward (step)"] = int(steps[idx])
+
+        else:
+            metrics["Mean Policy Reward"] = None
+            metrics["Mean Policy Reward (start step)"] = None
+            metrics["Early Reward Mean"] = None
+            metrics["Early Reward Mean (start step)"] = None
+            metrics["Final Reward Mean"] = None
+            metrics["Final Reward Mean (start step)"] = None
+            metrics["Best Reward"] = None
+            metrics["Best Reward (step)"] = None
+
         for tag, label in TAGS.items():
             try:
                 events = ea.Scalars(tag)
             except KeyError:
-                print(f"[WARNING] Missing tag '{tag}' in '{run_id}'")
                 metrics[label] = None
                 metrics[f"{label} (start step)"] = None
                 continue
@@ -189,35 +237,27 @@ class MetricsAnalyzer:
                 metrics[f"{label} (start step)"] = None
                 continue
 
+            events.sort(key=lambda e: e.step)
             steps = np.array([e.step for e in events])
             values = np.array([e.value for e in events])
 
-            first_step = steps.min()
-            window_limit = first_step + n_steps
-            mask = (steps >= first_step) & (steps <= window_limit)
+            first = steps.min()
+            mask = (steps >= first) & (steps <= first + n_steps)
 
             metrics[label] = float(values[mask].mean()) if np.any(mask) else None
-            if label == "Number of Agents":
-                continue
-            else:
-                metrics[f"{label} (start step)"] = int(first_step)
+            if label != "Number of Agents":
+                metrics[f"{label} (start step)"] = int(first)
 
-        # Compute step interval used for computing running means
         all_steps = []
         for tag in TAGS.keys():
             try:
                 events = ea.Scalars(tag)
-                if events:
-                    steps = np.array([e.step for e in events])
-                    all_steps.extend(steps)
+                all_steps.extend([e.step for e in events])
             except Exception:
-                continue
+                pass
 
-        if all_steps:
-            first_step = min(all_steps)
-            last_step = max(all_steps)
-            metrics["Step Interval (Running Mean)"] = int(last_step - first_step)
-        else:
-            metrics["Step Interval (Running Mean)"] = None
+        metrics["Step Interval (Running Mean)"] = (
+            int(max(all_steps) - min(all_steps)) if all_steps else None
+        )
 
         return metrics

@@ -1,7 +1,7 @@
 """Command-line argument parsing."""
 
 import argparse
-from scripts.config.constants import N_STEPS
+from scripts.config.constants import DEFAULT_N_STEPS
 from scripts.models.data_models import TrainingArgs
 
 
@@ -13,7 +13,7 @@ def parse_arguments() -> TrainingArgs:
     )
     parser.add_argument("--config", required=True, help="Path to the ML-Agents YAML config file")
     parser.add_argument("--run-id", required=True, help="Run ID for the training session")
-    parser.add_argument("--num-steps", type=int, default=N_STEPS, help="Number of steps to monitor")
+    parser.add_argument("--num-steps", type=int, help="Number of steps to monitor")
     parser.add_argument("--headless", dest="env_path", help="Path to headless build")
     parser.add_argument("--ac", action="store_true", help="Enable auto-commit")
     parser.add_argument("--seed", type=int, help="Seed for reproducibility")
