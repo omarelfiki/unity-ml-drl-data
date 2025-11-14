@@ -636,5 +636,29 @@
         "Steps to Threshold": "12000",
         "Time to Threshold (s)": "0.0",
         "Threshold Version": "2025-11-07_15-45"
+    },
+    {
+        "Run ID": "C_LN_Hallway_41",
+        "Environment": "Hallway",
+        "Seed": "41",
+        "Algorithm": "ppo",
+        "Steps": "10000000",
+        "Batch Size": "128",
+        "Buffer Size": "1024",
+        "Learning Rate": "0.0003",
+        "Epochs": "3",
+        "Total Time": "12779",
+        "Average CPU": "47.5",
+        "Average RAM": "67.8",
+        "Mean Policy Reward": "-0.9991",
+        "Mean Policy Reward (start step)": "10000",
+        "Mean Policy Loss": "0.2949",
+        "Mean Policy Loss (start step)": "10000",
+        "Mean Value Loss": "0.0030",
+        "Mean Value Loss (start step)": "10000",
+        "Mean Entropy": "1.5986",
+        "Mean Entropy (start step)": "10000",
+        "Number of Agents": "16.0000",
+        "Step Interval (Running Mean)": "9990000"
     }
 ]
