@@ -1,6 +1,6 @@
 # Data Validation Report
 
-Generated on 2025-11-14 10:18:57
+Generated on 2025-11-14 10:23:53
 
 ⚠️ **Issues found:**
 - Out-of-range values in 'average_cpu' (4 rows)
