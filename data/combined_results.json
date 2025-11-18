@@ -298,5 +298,19 @@
         "Mean Entropy (start step)": "12000",
         "Number of Agents": "12.0000",
         "Step Interval (Running Mean)": "480000"
+    },
+    {
+        "Run ID": "C_AK_PushBlock_21",
+        "Environment": "PushBlock",
+        "Seed": "21",
+        "Algorithm": "ppo",
+        "Steps": "2000000",
+        "Batch Size": "128",
+        "Buffer Size": "2048",
+        "Learning Rate": "0.0003",
+        "Epochs": "3",
+        "Total Time": "3",
+        "Average CPU": "49.7",
+        "Average RAM": "85.8"
     }
 ]
