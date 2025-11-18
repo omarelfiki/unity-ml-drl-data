@@ -1,7 +1,7 @@
 """Configuration constants for ML-Agents training runner."""
 
 VERSION = "2.5"
-AUTO_COMMIT_BRANCH = "Basic_Control"
+AUTO_COMMIT_BRANCH = "data/AM_week1_walljump"
 
 # Default number of tail steps to compute running means / best metrics
 DEFAULT_N_STEPS = 50000  # fallback for unknown environments
