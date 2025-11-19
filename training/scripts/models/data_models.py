@@ -14,6 +14,7 @@ class TrainingArgs:
     seed: Optional[int]
     no_thresholds: bool
     verbose: bool
+    batch_range: Optional[tuple[int, int]]
 
 @dataclass
 class SystemMetrics:
