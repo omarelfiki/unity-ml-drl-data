@@ -2,7 +2,7 @@
 ML-Agents Training Runner Version 2.5
 Created by AIML 6 2024-2025 (Maastricht University - DACS P2-1: Artificial Intelligence and Machine Learning)
 
-usage: python -m scripts.train_model [-h] [--version] [--verbose] [-v] --config CONFIG --run-id RUN_ID [--num-steps NUM_STEPS] [--headless ENV_PATH] [--ac] [--seed SEED] [--no-thresholds] [--batch]
+usage: python -m scripts.train [-h] [--version] [--verbose] [-v] --config CONFIG --run-id RUN_ID [--num-steps NUM_STEPS] [--headless ENV_PATH] [--ac] [--seed SEED] [--no-thresholds] [--batch]
 options:
   -h, --help            show this help message and exit
   --version             show program's version number and exit
