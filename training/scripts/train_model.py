@@ -37,13 +37,13 @@ def main():
             result = training.run()
             save_and_display_results(result.combined_data, args.verbose)
         if args.ac:
-            auto_commit_results(f"Auto-update: new training batch results for {run_id} seed range {start}-{end}")
+            auto_commit_results(args.verbose,f"Auto-update: new training batch results for {run_id} seed range {start}-{end}")
     else:
         training = TrainingRunner(args)
         result = training.run()
         save_and_display_results(result.combined_data, args.verbose)
         if args.ac:
-            auto_commit_results(f"Auto-update: new training results for {args.run_id}")
+            auto_commit_results(args.verbose,f"Auto-update: new training results for {args.run_id}")
 
 if __name__ == "__main__":
     main()
