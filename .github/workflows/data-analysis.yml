@@ -1,10 +1,10 @@
 name: Data Analysis, Validation
 
 on:
-  push:
-    paths:
-      - "data/combined_results.csv"
-      - "data/combined_results.json"
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
 permissions:
@@ -30,11 +30,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install pandas tabulate matplotlib numpy pathlib
 
-      - name: Generate summary report
-        run: python training/scripts/workflows/results_summary.py
-
       - name: Run validation script
         run: python training/scripts/workflows/validate_results.py
+
+      - name: Generate summary report
+        run: python training/scripts/workflows/results_summary.py
 
       - name: Commit & push all updates
         uses: actions-js/push@master

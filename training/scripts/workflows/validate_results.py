@@ -5,7 +5,7 @@ Reads data/combined_results.csv, and validates data on values, ranges and types.
 
 Dependency for Github Actions workflows on repo.
 """
-
+import sys
 
 # === Imports ===
 import pandas as pd
@@ -14,11 +14,18 @@ import os
 import time
 from datetime import datetime
 
+
 # === SIMPLE LOGGING ===
 def log(message):
     """Timestamped log messages for clarity in local runs and GitHub Actions."""
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"[{timestamp}] {message}")
+
+def exit_message():
+    end_time = time.time()
+    duration = round(end_time - start_time, 2)
+    log(f"Finished in {duration} seconds.")
+    log("=== Validation Process Complete ===")
 
 # Start
 log("=== Starting Validation Process ===")
@@ -79,6 +86,24 @@ if not df.empty:
             if not invalid.empty:
                 validation_issues.append(f"Out-of-range values in '{col}' ({len(invalid)} rows)")
 
+    def check_duplicates(df, col="run_id"):
+        if col in df.columns:
+            dup_count = df[col].duplicated().sum()
+            if dup_count:
+                validation_issues.append(f"Duplicate values in '{col}': {dup_count}")
+
+    def check_seed_integer(df, col="seed"):
+        if col in df.columns:
+            # Convert to numeric, produce NaN for invalid values
+            coerced = pd.to_numeric(df[col], errors="coerce")
+
+            # Identify rows where seed is invalid (NaN) but original value is not N/A
+            invalid_mask = coerced.isna() & (df[col] != "N/A")
+
+            invalid_count = invalid_mask.sum()
+            if invalid_count > 0:
+                validation_issues.append(f"Non-integer values in '{col}': {invalid_count}")
+
     def check_threshold_versions(col):
         """Ensure that all threshold versions referenced in CSV exist in data/thresholds/."""
         if col in df.columns:
@@ -98,6 +123,8 @@ if not df.empty:
 
     check_range("average_cpu", 0, 100)
     check_range("average_ram", 0, 100)
+    check_seed_integer(df)
+    check_duplicates(df)
     check_threshold_versions("threshold_version")
 
     # Type consistency check
@@ -108,7 +135,6 @@ if not df.empty:
 else:
     validation_issues.append("CSV file is empty or unreadable.")
 
-# === STEP 3: CROSS-VERIFY JSON (Optional) ===
 try:
     if os.path.exists(json_path):
         with open(json_path, "r") as f:
@@ -148,12 +174,10 @@ except Exception as e:
 if validation_issues:
     log("Validation failed with issues:")
     for issue in validation_issues:
-        log(f"   - {issue}")
+        log(f"- {issue}")
+    exit_message()
+    sys.exit(1)
 else:
     log("Validation completed with no issues.")
-
-# === STEP 6: END ===
-end_time = time.time()
-duration = round(end_time - start_time, 2)
-log(f"Finished in {duration} seconds.")
-log("=== Validation Process Complete ===")
+    exit_message()
+    sys.exit(0)
