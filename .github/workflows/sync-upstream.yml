@@ -34,7 +34,7 @@ jobs:
           git remote add upstream "https://github.com/DennisSoemers/BCS2720-project-data-collection-2025-2026.git"
           git fetch upstream
           git checkout main
-          git pull upstream main
+          git pull --rebase upstream main
 
       - name: Copy updated results to Group 6
         run: |
