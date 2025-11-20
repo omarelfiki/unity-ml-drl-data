@@ -12,12 +12,21 @@ from scripts.config.constants import VERSION, CSV_HEADERS, KEY_MAPPING
 
 def print_intro(args: TrainingArgs):
     title = f"ML-Agents Training Runner V{VERSION} by AIML 6 - Maastricht University DACS Project 2-1: Artificial Intelligence and Machine Learning"
+
+    if args.seed is not None:
+        seed = args.seed
+    elif args.batch_range is not None:
+        start, end = args.batch_range
+        seed = f"{start}-{end}"
+    else:
+        seed = "Undefined"
+
     items = [
         f"Run ID: {args.run_id}",
         f"Config: {os.path.basename(args.config) if args.config else 'N/A'}",
         f"Auto-commit: {'ON' if args.ac else 'OFF'}",
         f"Env: {args.env_path if args.env_path else 'Unity Editor'}",
-        f"Seed: {args.seed if args.seed is not None else 'N/A'}",
+        f"Seed: {seed}",
         f"Steps: {args.num_steps if args.num_steps is not None else 'Defined in Config'}",
         f"Thresholds: {'ON' if not args.no_thresholds else 'OFF'}",
         f"Started: {time.strftime('%Y-%m-%d %H:%M:%S')}",

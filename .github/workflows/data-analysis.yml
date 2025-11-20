@@ -1,10 +1,10 @@
 name: Data Analysis, Validation
 
 on:
-  push:
-    paths:
-      - "data/combined_results.csv"
-      - "data/combined_results.json"
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
 permissions:
@@ -30,16 +30,28 @@ jobs:
           python -m pip install --upgrade pip
           pip install pandas tabulate matplotlib numpy pathlib
 
+      - name: Run validation script
+        run: python training/scripts/workflows/validate_results.py
+
       - name: Generate summary report
         run: python training/scripts/workflows/results_summary.py
 
-      - name: Run validation script
-        run: python training/scripts/workflows/validate_results.py
+      - name: Determine target branch
+        id: branch
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "branch=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
+            echo "repo=${{ github.event.pull_request.head.repo.full_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+            echo "repo=${{ github.repository }}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Commit & push all updates
         uses: actions-js/push@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref_name }}
+          branch: ${{ steps.branch.outputs.branch }}
+          repository: ${{ steps.branch.outputs.repo }}
           message: "Auto-update summaries and validation [skip ci]"
           directory: .

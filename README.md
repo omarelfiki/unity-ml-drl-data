@@ -30,7 +30,7 @@ See [```SETUP.md```](https://www.github.com/omarelfiki/unity-ml-drl-data/tree/ma
 
 ### Training
 ```
-python -m scripts.train_model [-h] --config <config_file> --run-id <run_id> [--num-steps <int>] [--headless <env_path>]
+python -m scripts.train [-h] --config <config_file> --run-id <run_id> [--num-steps <int>] [--headless <env_path>]
 ```
 > Example Usage for training script. Results will be appended to shared dataset. Local results are directed to gitignore.
 

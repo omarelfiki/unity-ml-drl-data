@@ -3,7 +3,7 @@ import os
 import subprocess
 from scripts.config.constants import AUTO_COMMIT_BRANCH
 
-def auto_commit_results(v, commit_message="Auto-update: new training results"):
+def auto_commit_results(v, commit_message):
     data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../data"))
     files_to_commit = ["combined_results.csv", "combined_results.json"]
 

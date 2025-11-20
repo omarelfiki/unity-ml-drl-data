@@ -19,8 +19,13 @@ def parse_arguments() -> TrainingArgs:
     parser.add_argument("--seed", type=int, help="Seed for reproducibility")
     parser.add_argument("--no-thresholds", action="store_true", help="Disable threshold analysis")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
+    parser.add_argument("--version", action="version", version="%(prog)s 2.0")
+    parser.add_argument("--batch", nargs=2, type = int, help="Set a range of seeds for batch training")
 
     args = parser.parse_args()
+    batch_range = tuple(args.batch) if args.batch else None
+    if args.seed is not None and batch_range is not None:
+        raise ValueError("Cannot specify both --seed and --batch")
 
     return TrainingArgs(
         config=args.config,
@@ -30,5 +35,6 @@ def parse_arguments() -> TrainingArgs:
         env_path=args.env_path,
         seed=args.seed,
         no_thresholds=args.no_thresholds,
-        verbose=args.verbose
+        verbose=args.verbose,
+        batch_range=batch_range
     )
