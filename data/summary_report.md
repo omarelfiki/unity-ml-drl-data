@@ -1,5 +1,5 @@
 # Training Summary Report
-`Report generated on: 2025-11-20 06:01:34 UTC`
+`Report generated on: 2025-11-20 07:19:13 UTC`
 
 Summary of training run results.
 
@@ -13,10 +13,16 @@ Overview Statistics
 | Average Cpu | 51.21 |
 | Average Ram | 80.19 |
 | Batch Size | 90.18 |
+| Best Reward | 19.32 |
+| Best Reward Step | 1,938,618.18 |
 | Buffer Size | 3,182.55 |
+| Early Reward Mean | 0.11 |
+| Early Reward Mean Step | 19,090.91 |
 | Entropy Mean | 1.65 |
 | Entropy Mean Step | 19,090.91 |
 | Epochs | 3 |
+| Final Reward Mean | 19.14 |
+| Final Reward Mean Step | 2,424,600 |
 | Learning Rate | 0.00 |
 | Num Agents | 15.55 |
 | P Loss Mean | 0.12 |
@@ -35,10 +41,16 @@ Overview Statistics
 | Average Cpu | 5.62 |
 | Average Ram | 8.19 |
 | Batch Size | 43.15 |
+| Best Reward | 38.43 |
+| Best Reward Step | 3,161,427.31 |
 | Buffer Size | 4,256.33 |
+| Early Reward Mean | 1.16 |
+| Early Reward Mean Step | 20,391.79 |
 | Entropy Mean | 1.08 |
 | Entropy Mean Step | 20,391.79 |
 | Epochs | 0 |
+| Final Reward Mean | 38.11 |
+| Final Reward Mean Step | 3,553,381.06 |
 | Learning Rate | 0.00 |
 | Num Agents | 11.16 |
 | P Loss Mean | 0.06 |
