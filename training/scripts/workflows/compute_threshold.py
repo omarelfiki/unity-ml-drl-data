@@ -79,7 +79,6 @@ def main():
         print(f"{env_name}: R*={r_star:.3f}, T={t_run:.3f}, best={best_reward:.3f}, "
               f"points={len(rewards)}, first reach step={first_reach}")
 
-    # Assemble payload with metadata
     version_ts = datetime.now().strftime("%Y-%m-%d_%H-%M")
     payload = {
         "version": version_ts,

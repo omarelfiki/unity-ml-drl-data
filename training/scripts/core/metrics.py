@@ -95,11 +95,13 @@ class MetricsAnalyzer:
         return TrainingResult(combined_data, behavior_name, environment, performance.total_time, log_dir)
 
     def analyze_thresholds(self, result: TrainingResult):
-        thresholds_path = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")), "data",
+        thresholds_path = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..")), "data",
                                        "thresholds", "latest_thresholds.json")
         threshold_value = "N/A"
         steps_to_threshold = "Not reached"
         time_to_threshold = "Not reached"
+        threshold_reached = False
+
         try:
             with open(thresholds_path, 'r') as f:
                 thresholds_file = json.load(f)
@@ -139,6 +141,7 @@ class MetricsAnalyzer:
                                 elapsed_ratio = (threshold_reached_step - first_step) / total_steps
                                 time_to_threshold = elapsed_ratio * result.total_time
                                 time_to_threshold = f"{time_to_threshold:.1f}"
+                                threshold_reached = True
                             else:
                                 steps_to_threshold = "Not reached"
                                 time_to_threshold = "Not reached"
@@ -161,6 +164,7 @@ class MetricsAnalyzer:
         result.combined_data["Steps to Threshold"] = str(steps_to_threshold)
         result.combined_data["Time to Threshold (s)"] = str(time_to_threshold)
         result.combined_data["Threshold Version"] = str(thresholds_file["version"])
+        result.combined_data["Threshold Reached"] = str(threshold_reached)
 
     def extract_tensorboard_metrics(self, log_dir, n_steps):
         run_id = self.args.run_id
