@@ -1,7 +1,7 @@
 """Configuration constants for ML-Agents training runner."""
 
 VERSION = "2.5"
-AUTO_COMMIT_BRANCH = "main"
+AUTO_COMMIT_BRANCH = "3DBall_Updated"
 
 # Default number of tail steps to compute running means / best metrics
 DEFAULT_N_STEPS = 50000  # fallback for unknown environments
