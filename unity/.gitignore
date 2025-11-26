@@ -106,3 +106,5 @@ InitTestScene*.unity*
 /[Pp]rojectSettings/EditorBuildSettings.asset
 
 /Assets/ML-Agents/Timers/
+
+.vsconfig
