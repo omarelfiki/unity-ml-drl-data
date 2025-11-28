@@ -1,7 +1,7 @@
 """Configuration constants for ML-Agents training runner."""
 
 VERSION = "2.5"
-AUTO_COMMIT_BRANCH = "Updated_Crawler"
+AUTO_COMMIT_BRANCH = 'U_AM_WallJump'
 
 # Default number of tail steps to compute running means / best metrics
 DEFAULT_N_STEPS = 50000  # fallback for unknown environments

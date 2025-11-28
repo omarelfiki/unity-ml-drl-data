@@ -1,0 +1,69 @@
+{
+    "BigWallJump": {
+        "checkpoints": [
+            {
+                "steps": 499902,
+                "file_path": "results\\U_AM_WallJump_week2_seed58\\BigWallJump\\BigWallJump-499902.onnx",
+                "reward": -0.3840000381072362,
+                "creation_time": 1764302255.5154285,
+                "auxillary_file_paths": [
+                    "results\\U_AM_WallJump_week2_seed58\\BigWallJump\\BigWallJump-499902.pt"
+                ]
+            },
+            {
+                "steps": 999910,
+                "file_path": "results\\U_AM_WallJump_week2_seed58\\BigWallJump\\BigWallJump-999910.onnx",
+                "reward": -0.9995000716298819,
+                "creation_time": 1764303165.1732764,
+                "auxillary_file_paths": [
+                    "results\\U_AM_WallJump_week2_seed58\\BigWallJump\\BigWallJump-999910.pt"
+                ]
+            },
+            {
+                "steps": 1000023,
+                "file_path": "results\\U_AM_WallJump_week2_seed58\\BigWallJump\\BigWallJump-1000023.onnx",
+                "reward": -1.1196000561118127,
+                "creation_time": 1764303165.533848,
+                "auxillary_file_paths": [
+                    "results\\U_AM_WallJump_week2_seed58\\BigWallJump\\BigWallJump-1000023.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 1000023,
+            "file_path": "results\\U_AM_WallJump_week2_seed58\\BigWallJump.onnx",
+            "reward": -1.1196000561118127,
+            "creation_time": 1764303165.533848,
+            "auxillary_file_paths": [
+                "results\\U_AM_WallJump_week2_seed58\\BigWallJump\\BigWallJump-1000023.pt"
+            ]
+        }
+    },
+    "SmallWallJump": {
+        "checkpoints": [
+            {
+                "steps": 111477,
+                "file_path": "results\\U_AM_WallJump_week2_seed58\\SmallWallJump\\SmallWallJump-111477.onnx",
+                "reward": 0.43444236599664426,
+                "creation_time": 1764303165.3283565,
+                "auxillary_file_paths": [
+                    "results\\U_AM_WallJump_week2_seed58\\SmallWallJump\\SmallWallJump-111477.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 111477,
+            "file_path": "results\\U_AM_WallJump_week2_seed58\\SmallWallJump.onnx",
+            "reward": 0.43444236599664426,
+            "creation_time": 1764303165.3283565,
+            "auxillary_file_paths": [
+                "results\\U_AM_WallJump_week2_seed58\\SmallWallJump\\SmallWallJump-111477.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.4.1+cpu"
+    }
+}
