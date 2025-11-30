@@ -109,7 +109,9 @@ class MetricsAnalyzer:
             env_name_for_threshold = result.behavior_name if result.behavior_name else result.environment
             thresholds = thresholds_file["thresholds"]
             if env_name_for_threshold in thresholds:
-                env_threshold_entry = thresholds[result.environment]
+                if env_name_for_threshold == "WallJump":
+                    env_name_for_threshold = "BigWallJump"
+                env_threshold_entry = thresholds[env_name_for_threshold]
                 threshold_value = env_threshold_entry["T_run"] if isinstance(env_threshold_entry,
                                                                              dict) else env_threshold_entry
                 # Load TensorBoard events for cumulative reward
