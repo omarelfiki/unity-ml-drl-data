@@ -1,10 +1,10 @@
 # Data Validation Report
 
-Generated on 2025-11-30 09:02:35
+Generated on 2025-12-01 22:32:12
 
 **All checks passed successfully.**
 
 ## Dataset Overview
-- Rows: 147
+- Rows: 177
 - Columns: 34
 - Missing values: 0
