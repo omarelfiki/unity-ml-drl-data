@@ -77,8 +77,6 @@ def save_and_display_results(combined_data: dict, v: bool = False):
     os.makedirs(data_dir, exist_ok=True)
 
     csv_file = os.path.join(data_dir, "combined_results.csv")
-    json_file = os.path.join(data_dir, "combined_results.json")
-
     normalized_data = {}
     for old_key, new_key in KEY_MAPPING.items():
         if old_key in combined_data:
@@ -103,17 +101,3 @@ def save_and_display_results(combined_data: dict, v: bool = False):
         filtered_data = {key: normalized_data.get(key, "") for key in CSV_HEADERS}
         writer.writerow(filtered_data)
         if v: print(f"[INFO] Results saved to '{csv_file}'")
-
-    # Write or append to JSON
-    json_data = []
-    if os.path.isfile(json_file):
-        try:
-            with open(json_file, 'r') as jf:
-                json_data = json.load(jf)
-        except Exception:
-            json_data = []
-
-    json_data.append(combined_data)
-    with open(json_file, 'w') as jf:
-        json.dump(json_data, jf, indent=4)
-        if v: print(f"[INFO] Results saved to '{json_file}'")

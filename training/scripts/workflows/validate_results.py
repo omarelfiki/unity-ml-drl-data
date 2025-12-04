@@ -140,9 +140,7 @@ try:
         with open(json_path, "r") as f:
             json_data = json.load(f)
         if len(json_data) != len(df):
-            validation_issues.append(
-                f"Mismatch: JSON has {len(json_data)} entries, CSV has {len(df)}."
-            )
+            log(f"[WARNING] Mismatch: JSON has {len(json_data)} entries, CSV has {len(df)}.")
         log("JSON consistency check complete.")
 except Exception as e:
     log(f"[WARNING] Could not verify JSON file: {e}")
