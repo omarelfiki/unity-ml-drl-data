@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  generate-report:
+  backup-data:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pandas json
+          pip install pandas
 
       - name: Run JSON script
         run: python training/scripts/workflows/backup_data.py
