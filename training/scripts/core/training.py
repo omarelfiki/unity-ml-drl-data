@@ -127,8 +127,11 @@ class TrainingRunner:
         return performance
 
     def _build_command(self) -> list[str]:
-        # use randomized temp config instead of original
-        cfg_path = self._build_randomized_config()
+        if self.args.randomize:
+            # use randomized temp config instead of original
+            cfg_path = self._build_randomized_config()
+        else:
+            cfg_path = self.args.config
 
         cmd = [
             "mlagents-learn",

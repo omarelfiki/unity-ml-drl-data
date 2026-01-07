@@ -33,7 +33,8 @@ def print_intro(args: TrainingArgs):
         f"Steps: {args.num_steps if args.num_steps is not None else 'Defined in Config'}",
         f"Thresholds: {'ON' if not args.no_thresholds else 'OFF'}",
         f"Started: {time.strftime('%Y-%m-%d %H:%M:%S')}",
-        f"Verbose: {args.verbose if args.verbose is not None else 'Disabled'}",
+        f"Verbose: {'Enabled' if args.verbose else 'Disabled'}",
+        f"Randomize: {'Enabled' if args.randomize else 'Disabled'}"
     ]
 
     joined = "  \u2022  ".join(items)
