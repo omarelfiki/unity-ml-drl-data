@@ -11,7 +11,10 @@ from scripts.config.constants import VERSION, CSV_HEADERS, KEY_MAPPING
 
 
 def print_intro(args: TrainingArgs):
-    title = f"ML-Agents Training Runner V{VERSION} by AIML 6 - Maastricht University DACS Project 2-1: Artificial Intelligence and Machine Learning"
+    title = (
+        f"ML-Agents Training Runner V{VERSION} by AIML 6 - Maastricht University "
+        f"DACS Project 2-1: Artificial Intelligence and Machine Learning"
+    )
 
     if args.seed is not None:
         seed = args.seed
@@ -54,50 +57,61 @@ def print_intro(args: TrainingArgs):
     print(f"| {padded_title} |")
     print(f"| {padded_meta} |")
 
+
 def strip_ansi(s: str) -> str:
     ansi_re = re.compile(r"\x1b\[[0-9;]*m")
     return ansi_re.sub("", s)
 
+
 def save_and_display_results(combined_data: dict, v: bool = False):
-    key_width = max(len(k) for k in combined_data.keys())
-    val_width = max(len(v) for v in combined_data.values())
+    # Normalize all values to strings so len() and ljust() are safe
+    string_data = {
+        k: ("" if value is None else str(value))
+        for k, value in combined_data.items()
+    }
+
+    key_width = max(len(k) for k in string_data.keys())
+    val_width = max(len(v) for v in string_data.values()) if string_data else 0
 
     print("\n" + "=" * (key_width + val_width + 7))
     print(f"| {'Metric'.ljust(key_width)} | {'Value'.ljust(val_width)} |")
     print("=" * (key_width + val_width + 7))
 
-    for key, value in combined_data.items():
+    for key, value in string_data.items():
         print(f"| {key.ljust(key_width)} | {value.ljust(val_width)} |")
 
     print("=" * (key_width + val_width + 7))
 
     # Save results to CSV and JSON in 'data' folder outside 'training' directory
-    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+    project_root = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..", "..", "..")
+    )
     data_dir = os.path.join(project_root, "data")
     os.makedirs(data_dir, exist_ok=True)
 
     csv_file = os.path.join(data_dir, "combined_results.csv")
     normalized_data = {}
     for old_key, new_key in KEY_MAPPING.items():
-        if old_key in combined_data:
-            normalized_data[new_key] = combined_data[old_key]
+        if old_key in string_data:
+            normalized_data[new_key] = string_data[old_key]
         else:
             normalized_data[new_key] = ""
 
     # Write or append to CSV
     file_exists = os.path.isfile(csv_file)
     # Ensure the file ends with a newline before appending
-    with open(csv_file, 'a+', newline='') as csvfile:
+    with open(csv_file, "a+", newline="") as csvfile:
         csvfile.seek(0, os.SEEK_END)
         if csvfile.tell() > 0:
             csvfile.seek(csvfile.tell() - 1)
             last_char = csvfile.read(1)
-            if last_char != '\n':
-                csvfile.write('\n')
+            if last_char != "\n":
+                csvfile.write("\n")
 
         writer = csv.DictWriter(csvfile, fieldnames=CSV_HEADERS)
         if not file_exists:
             writer.writeheader()
         filtered_data = {key: normalized_data.get(key, "") for key in CSV_HEADERS}
         writer.writerow(filtered_data)
-        if v: print(f"[INFO] Results saved to '{csv_file}'")
+        if v:
+            print(f"[INFO] Results saved to '{csv_file}'")
