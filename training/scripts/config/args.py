@@ -1,6 +1,8 @@
 """Command-line argument parsing."""
 
 import argparse
+import os
+
 from scripts.config.constants import DEFAULT_N_STEPS
 from scripts.models.data_models import TrainingArgs
 
@@ -21,11 +23,15 @@ def parse_arguments() -> TrainingArgs:
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
     parser.add_argument("--version", action="version", version="%(prog)s 2.0")
     parser.add_argument("--batch", nargs=2, type = int, help="Set a range of seeds for batch training")
+    parser.add_argument("--randomize", action="store_true", help="Randomize the config file for selected environment when using --batch")
 
     args = parser.parse_args()
     batch_range = tuple(args.batch) if args.batch else None
     if args.seed is not None and batch_range is not None:
         raise ValueError("Cannot specify both --seed and --batch")
+    if args.randomize:
+        if batch_range is None:
+            raise ValueError("Cannot randomize config without batch range.")
 
     return TrainingArgs(
         config=args.config,
@@ -36,5 +42,6 @@ def parse_arguments() -> TrainingArgs:
         seed=args.seed,
         no_thresholds=args.no_thresholds,
         verbose=args.verbose,
-        batch_range=batch_range
+        batch_range=batch_range,
+        randomize=args.randomize
     )

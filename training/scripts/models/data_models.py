@@ -15,6 +15,7 @@ class TrainingArgs:
     no_thresholds: bool
     verbose: bool
     batch_range: Optional[tuple[int, int]]
+    randomize: bool
 
 @dataclass
 class SystemMetrics:
