@@ -56,3 +56,5 @@ df_test["pred_steps_to_threshold"] = y_steps_pred
 
 y_time_pred = predict(df_train, df_test, 1)
 df_test["pred_time_to_threshold"] = y_time_pred
+
+df_test.to_csv("test_with_predictions.csv", index=False)
