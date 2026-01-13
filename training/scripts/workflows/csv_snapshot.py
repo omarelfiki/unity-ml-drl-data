@@ -5,7 +5,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parents[2]
 DATA_DIR = PROJECT_ROOT / "data"
 INPUT_CSV = DATA_DIR / "combined_results.csv"
-OUTPUT_CSV = DATA_DIR / "threshold_results.csv"
+OUTPUT_CSV = DATA_DIR / "prediction_snapshot.csv"
 
 threshold_cols = [
     "threshold_value",
