@@ -9,6 +9,10 @@ def dump_and_save(ts, out, clf, m_steps, m_time, metrics):
     models_dir.mkdir(parents=True, exist_ok=True)
 
     version_dir = models_dir / f"version_{ts}"
+    suffix = 1
+    while version_dir.exists():
+        version_dir = models_dir / f"version_{ts}_{suffix}"
+        suffix += 1
     version_dir.mkdir(parents=True, exist_ok=True)
 
     save_errors = {}

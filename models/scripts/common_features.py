@@ -10,7 +10,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 ENV = "3DBall"
-DATA = "../data/combined_results.csv"
+DATA = "../data/prediction_snapshot.csv"
 
 # Configurations
 NUM_FEATS = [
