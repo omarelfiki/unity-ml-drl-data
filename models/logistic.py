@@ -9,13 +9,14 @@ from sklearn.pipeline import Pipeline
 from common_features import load_df, make_preprocess, DATA
 
 
-def train_classifier(df, test_size=0.2, seed=42, thresh=0.5):
-    pre, feats = make_preprocess(df)
-    X, y = df[feats], df["run_reached_threshold"].astype(int).values
+def train_classifier_split(train_df, test_df, thresh=0.5):
+    """Fit on train_df, evaluate + predict on test_df (both already 3DBall)."""
+    pre, feats = make_preprocess(train_df)
 
-    Xtr, Xte, ytr, yte = train_test_split(
-        X, y, test_size=test_size, random_state=seed, stratify=y
-    )
+    Xtr = train_df[feats]
+    ytr = train_df["run_reached_threshold"].astype(int).values
+    Xte = test_df[feats]
+    yte = test_df["run_reached_threshold"].astype(int).values
 
     clf = Pipeline([
         ("pre", pre),
@@ -35,19 +36,4 @@ def train_classifier(df, test_size=0.2, seed=42, thresh=0.5):
         "roc_auc": float(roc_auc_score(yte, proba)) if len(np.unique(yte)) == 2 else float("nan"),
         "confusion_matrix": confusion_matrix(yte, pred).tolist(),
     }
-    return clf, metrics
-
-
-def main():
-    df = load_df(DATA)
-    clf, metrics = train_classifier(df)
-
-    dump(clf, "logistic_reach_model.joblib")
-    with open("logistic_metadata.json", "w", encoding="utf-8") as f:
-        json.dump(metrics, f, indent=2)
-
-    print(json.dumps(metrics, indent=2))
-
-
-if __name__ == "__main__":
-    main()
+    return clf, metrics, proba, pred, feats
