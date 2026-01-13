@@ -1,12 +1,8 @@
-import json
 import numpy as np
-from joblib import dump
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, roc_auc_score, confusion_matrix
-from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
-
-from common_features import load_df, make_preprocess, DATA
+from scripts.common_features import make_preprocess
 
 
 def train_classifier_split(train_df, test_df, thresh=0.5):

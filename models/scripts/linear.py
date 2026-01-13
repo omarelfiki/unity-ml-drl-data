@@ -1,14 +1,10 @@
-import json
 import numpy as np
-from joblib import dump
 from sklearn.compose import TransformedTargetRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
-
-from common_features import load_df, make_preprocess, DATA
+from scripts.common_features import make_preprocess
 
 
 def train_two_regressors_split(train_df, test_df):
