@@ -11,7 +11,7 @@ Example: ```Assets/ML-Agents/Examples/3DBall/Scenes/3DBall.unity```
 
 Inside your virtual enviroment created earlier, run from ```/training```:
 
-    python -m scripts.train_model --config configs_official/3DBall.yaml --run-id ball_test_001
+    python -m scripts.train --config configs_official/3DBall.yaml --run-id ball_test_001
 
 > Hint 1: Use the ```-ac``` flag on your training command to enable auto-commit to a data collection branch
 > 
