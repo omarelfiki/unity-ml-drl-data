@@ -1,6 +1,8 @@
 import json
+from pathlib import Path
 import numpy as np
 import argparse
+from joblib import load
 from sklearn.model_selection import train_test_split
 from datetime import datetime
 from scripts.common_features import load_df
@@ -9,7 +11,7 @@ import scripts.linear as lin
 import scripts.utils as utils
 
 
-def main(test_size=0.2, seed=42, thresh=0.5):
+def main(test_size=0.2, seed=42, thresh=0.5, models_dir = None):
     print("[INFO]: Loading dataset splits and grouping features....")
     df = load_df()
     ts = datetime.now().strftime("%Y-%m-%d_%H-%M")
@@ -17,31 +19,123 @@ def main(test_size=0.2, seed=42, thresh=0.5):
     # One shared split for both stages
     y = df["run_reached_threshold"].astype(int).values
     train_df, test_df = train_test_split(df, test_size=test_size, random_state=seed, stratify=y)
-
     print("[INFO]: Training models....")
-    # Stage 1: logistic (reach probability)
-    try:
-        clf, clf_metrics, proba, pred, feats = log.train_classifier_split(train_df, test_df, thresh=thresh)
-    except Exception as e:
-        print(f"[ERROR]: classifier training failed: {e}")
-        clf = None
-        clf_metrics = {"error": str(e)}
-        proba = np.zeros(len(test_df))
-        pred = (proba > thresh).astype(int)
-        feats = []
 
-    # Stage 2: linear (conditional time/steps)
-    try:
-        m_steps, m_time, reg_metrics, feats2 = lin.train_two_regressors_split(train_df, test_df)
-    except Exception as e:
-        print(f"[ERROR]: regressors training failed: {e}")
-        m_steps = None
-        m_time = None
-        reg_metrics = {"error": str(e)}
-        feats2 = []
+    clf = None
+    clf_metrics = {}
+    reg_metrics = {}
+    proba = None
+    pred = None
+    feats = []
+    feats2 = []
+    m_steps = None
+    m_time = None
 
-    # Feature lists should match; if not, merge safely
+    if models_dir:
+        print(f"[INFO]: Loading models from {models_dir}....")
+        base = Path(models_dir)
+        clf_path = base / "logistic_reach_model.joblib"
+        m_steps_path = base / "linear_steps_model.joblib"
+        m_time_path = base / "linear_time_model.joblib"
+
+        # classifier
+        if clf_path.exists():
+            try:
+                clf = load(clf_path)
+                clf_metrics["loaded_from"] = str(clf_path)
+                feat_names = list(getattr(clf, "feature_names_in_", [])) or []
+                if feat_names:
+                    try:
+                        proba = np.asarray(clf.predict_proba(test_df[feat_names])[:, 1])
+                    except Exception:
+                        proba = None
+                if proba is None:
+                    try:
+                        proba = np.asarray(clf.predict_proba(test_df)[:, 1])
+                    except Exception:
+                        try:
+                            proba = np.asarray(clf.predict(test_df))
+                        except Exception:
+                            proba = None
+                if proba is not None:
+                    try:
+                        pred = (proba >= thresh).astype(int)
+                    except Exception:
+                        pred = np.zeros(len(proba), dtype=int)
+                feats = feat_names
+                print(f"[INFO]: Loaded classifier from ` {clf_path} `")
+            except Exception as e:
+                print(f"[ERROR]: failed to load classifier from ` {clf_path} `: {e}")
+                clf = None
+                clf_metrics["load_error"] = str(e)
+
+        # regressors
+        if m_steps_path.exists():
+            try:
+                m_steps = load(m_steps_path)
+                reg_metrics["m_steps_loaded"] = str(m_steps_path)
+                feats2 = list(getattr(m_steps, "feature_names_in_", [])) or feats2
+                print(f"[INFO]: Loaded steps regressor from ` {m_steps_path} `")
+            except Exception as e:
+                print(f"[ERROR]: failed to load steps regressor from ` {m_steps_path} `: {e}")
+                reg_metrics["m_steps_error"] = str(e)
+                m_steps = None
+
+        if m_time_path.exists():
+            try:
+                m_time = load(m_time_path)
+                reg_metrics["m_time_loaded"] = str(m_time_path)
+                feats2 = list(getattr(m_time, "feature_names_in_", [])) or feats2
+                print(f"[INFO]: Loaded time regressor from ` {m_time_path} `")
+            except Exception as e:
+                print(f"[ERROR]: failed to load time regressor from ` {m_time_path} `: {e}")
+                reg_metrics["m_time_error"] = str(e)
+                m_time = None
+
+    if clf is None or proba is None or pred is None:
+        print("[INFO]: Training classifier....")
+        try:
+            clf, clf_metrics, proba, pred, feats = log.train_classifier_split(train_df, test_df, thresh=thresh)
+        except Exception as e:
+            print(f"[ERROR]: classifier training failed: {e}")
+            clf = None
+            clf_metrics = {"error": str(e)}
+            proba = np.zeros(len(test_df))
+            pred = (proba >= thresh).astype(int)
+            feats = []
+
+    if m_steps is None or m_time is None:
+        print("[INFO]: Training regressors....")
+        try:
+            m_steps_tr, m_time_tr, reg_metrics_tr, feats2_tr = lin.train_two_regressors_split(train_df, test_df)
+            # only set models where absent
+            m_steps = m_steps or m_steps_tr
+            m_time = m_time or m_time_tr
+            # merge metrics and feature lists
+            if isinstance(reg_metrics_tr, dict):
+                reg_metrics.update(reg_metrics_tr)
+            feats2 = feats2 or feats2_tr
+        except Exception as e:
+            print(f"[ERROR]: regressors training failed: {e}")
+            reg_metrics.update({"error": str(e)})
+            m_steps = m_steps or None
+            m_time = m_time or None
+            feats2 = feats2 or []
+
+    # Feature lists should match; if not matching, then will be merged safely
+    feats = feats or []
+    feats2 = feats2 or []
     feats_use = feats if feats == feats2 else list(dict.fromkeys(feats + feats2))
+
+    # Normalize proba/pred
+    if proba is None:
+        proba = np.zeros(len(test_df))
+    proba = np.asarray(proba)
+    if pred is None:
+        try:
+            pred = (proba >= thresh).astype(int)
+        except Exception:
+            pred = np.zeros(len(proba), dtype=int)
 
     out = test_df.copy()
     out["p_reach"] = proba
@@ -53,10 +147,14 @@ def main(test_size=0.2, seed=42, thresh=0.5):
             print(f"[WARNING]: Missing features for prediction: {missing}. Correcting with -1.")
             for f in missing:
                 out[f] = -1
-        out["pred_steps_to_threshold_cond"] = np.clip(m_steps.predict(out[feats_use]), 0, np.inf)
-        out["pred_time_to_threshold_cond"] = np.clip(m_time.predict(out[feats_use]), 0, np.inf)
+        try:
+            out["pred_steps_to_threshold_cond"] = np.clip(m_steps.predict(out[feats_use]), 0, np.inf)
+            out["pred_time_to_threshold_cond"] = np.clip(m_time.predict(out[feats_use]), 0, np.inf)
+        except Exception as e:
+            print(f"[ERROR]: regressors failed to predict: {e}")
+            out["pred_steps_to_threshold_cond"] = 0.0
+            out["pred_time_to_threshold_cond"] = 0.0
     else:
-        # fallback if models failed
         out["pred_steps_to_threshold_cond"] = 0.0
         out["pred_time_to_threshold_cond"] = 0.0
 
@@ -75,13 +173,15 @@ def main(test_size=0.2, seed=42, thresh=0.5):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Two-stage prediction pipeline for 3DBall.")
+    parser = argparse.ArgumentParser(description="Two-stage prediction pipeline for ML-Agents Results.")
     parser.add_argument("--test_size", type=float, default=0.2,
                         help="Fraction of data used as test set (default: 0.2).")
     parser.add_argument("--seed", type=int, default=42,
                         help="Random seed for reproducible splitting (default: 42).")
     parser.add_argument("--thresh", type=float, default=0.5,
                         help="Threshold for pred_reach from p_reach (default: 0.5).")
+    parser.add_argument("--models-dir", dest="models_dir", type=str, default=None,
+                        help="Directory containing standard model names: `logistic_reach_model.joblib`, `linear_steps_model.joblib`, `linear_time_model.joblib`.")
 
     args = parser.parse_args()
-    main(test_size=args.test_size, seed=args.seed, thresh=args.thresh)
+    main(test_size=args.test_size, seed=args.seed, thresh=args.thresh, models_dir=args.models_dir)
