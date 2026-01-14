@@ -1,9 +1,10 @@
 import pandas as pd
-import numpy as np
-from paths import CSV_FILE, NORMALIZED_CSV
+from paths import CSV_FILE, NORMALIZED_DIR
+from datetime import datetime
 
 INPUT_CSV = CSV_FILE
-OUTPUT_CSV = NORMALIZED_CSV
+timestamp = datetime.now().strftime("%Y-%m-%d_%H_%M_%S")
+OUTPUT_CSV = NORMALIZED_DIR / f"normalized_results_{timestamp}.csv"
 
 # Metrics to z-score
 METRIC_COLS = [

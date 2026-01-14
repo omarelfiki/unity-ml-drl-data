@@ -1,8 +1,11 @@
 from pathlib import Path
 import pandas as pd
+from datetime import datetime
 from paths import CSV_FILE, SNAPSHOTS_DIR
 
-OUTPUT_CSV = SNAPSHOTS_DIR / "prediction_snapshot.csv"
+# Timestamped filename
+timestamp = datetime.now().strftime("%Y-%m-%d_%H_%M_%S")
+OUTPUT_CSV = SNAPSHOTS_DIR / f"prediction_snapshot_{timestamp}.csv"
 
 threshold_cols = [
     "threshold_value",
