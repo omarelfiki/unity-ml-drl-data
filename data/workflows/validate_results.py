@@ -1,9 +1,9 @@
 """
 Generates a Markdown validation report for training runs.
 
-Reads data/combined_results.csv, and validates data on values, ranges and types.
+Reads data/collected_results.csv, and validates data on values, ranges and types.
 
-Dependency for Github Actions workflows on repo.
+Dependency for GitHub Actions workflows on repo.
 """
 import sys
 
@@ -13,6 +13,7 @@ import json
 import os
 import time
 from datetime import datetime
+from paths import CSV_FILE, THRESHOLD_DIR, JSON_FILE, REPORTS_DIR
 
 
 # === SIMPLE LOGGING ===
@@ -30,21 +31,13 @@ def exit_message():
 # Start
 log("=== Starting Validation Process ===")
 start_time = time.time()
+VALIDATION_MD = os.path.join(REPORTS_DIR, "validation_report.md")
 
-# === PATH SETUP ===
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..', '..'))
-data_dir = os.path.join(project_root, "data")
-csv_path = os.path.join(data_dir, "combined_results.csv")
-json_path = os.path.join(data_dir, "combined_results.json")
-report_md = os.path.join(data_dir, "validation_report.md")
-
-log(f"Project root: {project_root}")
-log(f"Target file: {csv_path}")
+log(f"Target file: {CSV_FILE}")
 
 # === STEP 1: LOAD DATA ===
 try:
-    df = pd.read_csv(csv_path)
+    df = pd.read_csv(CSV_FILE)
     df = df.fillna("N/A")
     log(f"Loaded CSV with {len(df)} rows and {len(df.columns)} columns.")
 except Exception as e:
@@ -107,12 +100,11 @@ if not df.empty:
     def check_threshold_versions(col):
         """Ensure that all threshold versions referenced in CSV exist in data/thresholds/."""
         if col in df.columns:
-            thresholds_dir = os.path.join(data_dir, "thresholds")
-            if not os.path.exists(thresholds_dir):
+            if not os.path.exists(THRESHOLD_DIR):
                 validation_issues.append("Thresholds directory missing.")
                 return
             existing_files = {f.replace("thresholds_", "").replace(".json", "")
-                              for f in os.listdir(thresholds_dir)
+                              for f in os.listdir(THRESHOLD_DIR)
                               if f.startswith("thresholds_") and f.endswith(".json")}
 
             missing_versions = set(df[col].unique()) - existing_files - {"N/A"}
@@ -136,8 +128,8 @@ else:
     validation_issues.append("CSV file is empty or unreadable.")
 
 try:
-    if os.path.exists(json_path):
-        with open(json_path, "r") as f:
+    if os.path.exists(JSON_FILE):
+        with open(JSON_FILE, "r") as f:
             json_data = json.load(f)
         if len(json_data) != len(df):
             log(f"[WARNING] Mismatch: JSON has {len(json_data)} entries, CSV has {len(df)}.")
@@ -147,7 +139,7 @@ except Exception as e:
 
 # === STEP 4: GENERATE VALIDATION REPORT ===
 try:
-    with open(report_md, "w") as f:
+    with open(VALIDATION_MD, "w") as f:
         f.write("# Data Validation Report\n\n")
         f.write(f"Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
         if not validation_issues:
@@ -163,7 +155,7 @@ try:
             f.write(f"- Columns: {len(df.columns)}\n")
             f.write(f"- Missing values: {df.isna().sum().sum()}\n")
 
-    log(f"Validation report written to: {report_md}")
+    log(f"Validation report written to: {VALIDATION_MD}")
 
 except Exception as e:
     log(f"[ERROR] Failed to write validation report: {e}")

@@ -2,8 +2,7 @@
 
 All training runs automatically append a new entry to:
 
-data/combined_results.csv &
-data/combined_results.json
+data/collected_results.csv
 
 These files are shared by the whole team — so follow this workflow to keep everyone’s results organized and avoid data loss.
 
@@ -24,7 +23,7 @@ The script automatically adds your new results to the files above.
 Commit and push your updates:
 
 ```bash
-git add data/combined_results.csv data/combined_results.json
+git add data/collected_results.csv
 git commit -m "Add results for Run [YourRunID] ([Environment/ConfigName])"
 git push
 ```
@@ -33,12 +32,12 @@ git push
 
 If Git reports something like:
 ```abpublidot
-CONFLICT (content): Merge conflict in data/combined_results.csv
+CONFLICT (content): Merge conflict in data/collected_results.csv
 ```
 
 Open the file, keep both lines (each is a valid run), then:
 ```abpublidot
-git add data/combined_results.csv
+git add data/collected_results.csv
 git commit -m "Resolve CSV merge conflict"
 git push
 ```

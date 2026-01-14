@@ -1,11 +1,11 @@
 """
 Generates a Markdown summary report for training runs.
 
-Reads data/combined_results.csv, calculates stats (mean, std),
+Reads data/collected_results.csv, calculates stats (mean, std),
 creates plots, finds insights/anomalies, and writes the report
 to data/summary_report.md.
 
-Dependency for Github Actions workflows on repo.
+Dependency for GitHub Actions workflows on repo.
 """
 
 import pandas as pd
@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import base64
 import os
 from datetime import datetime
+from paths import REPORTS_DIR, CSV_FILE, PLOTS_DIR
 
 # CSV Header Definition
 CSV_HEADERS = [
@@ -42,13 +43,7 @@ def log(message):
     print(f"[{timestamp}] {message}")
 
 log("=== Starting Summary Generation ====")
-
-# Configuration and Paths
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..', '..'))
-data_dir = os.path.join(project_root, 'data')
-csv_path = os.path.join(data_dir, 'combined_results.csv')
-summary_md = os.path.join(data_dir, 'summary_report.md')
+SUMMARY_MD = os.path.join(REPORTS_DIR, 'summary_report.md')
 
 # Column name configuration (must match CSV headers)
 TIMESTAMP_COL = None
@@ -74,15 +69,14 @@ PLOT_PAIRS = [
 
 KEY_INSIGHT_COLS = ["reward_mean", "p_loss_mean", "average_cpu", "total_time"]
 
-log(f"Project root: {project_root}")
-log(f"Input CSV: {csv_path}")
-log(f"Output Markdown: {summary_md}")
+log(f"Input CSV: {CSV_FILE}")
+log(f"Output Markdown: {SUMMARY_MD}")
 
 # Load Data
 df = pd.DataFrame()
-if os.path.exists(csv_path):
+if os.path.exists(CSV_FILE):
     try:
-        df = pd.read_csv(csv_path)
+        df = pd.read_csv(CSV_FILE)
         log("Successfully loaded data from CSV")
 
         # Convert numeric columns, coercing errors to NaN
@@ -92,7 +86,7 @@ if os.path.exists(csv_path):
             elif col not in df.columns:
                 log(f"[WARNING] Configured numeric column '{col}' not found in CSV.")
 
-        # Sort by timestamp, if it exists
+        # Sort by timestamp if it exists
         if TIMESTAMP_COL and TIMESTAMP_COL in df.columns:
             df[TIMESTAMP_COL] = pd.to_datetime(df[TIMESTAMP_COL], errors='coerce')
             df = df.dropna(subset=[TIMESTAMP_COL])
@@ -105,7 +99,7 @@ if os.path.exists(csv_path):
     except Exception as e:
         log(f"[ERROR] Failed during CSV loading: {e}")
 else:
-    log(f"[ERROR] CSV file not found at: {csv_path}.")
+    log(f"[ERROR] CSV file not found at: {CSV_FILE}.")
 
 # Compute Statistics
 summary_stats = {}
@@ -135,7 +129,7 @@ else:
 
 # === Combined plot generation: saves to disk AND embeds in markdown ===
 def create_chart_base64(df_plot, x_col, y_col, title):
-    """Creates scatter plot, saves to file, and returns Base64 Markdown image."""
+    """Creates a scatter plot, saves to file, and returns Base64 Markdown image."""
     # Validate input
     if df_plot is None or df_plot.empty:
         return None
@@ -158,11 +152,10 @@ def create_chart_base64(df_plot, x_col, y_col, title):
         plt.grid(True, linestyle="--", alpha=0.5)
         plt.tight_layout()
 
-        # Ensure plots directory exists (cross-platform)
-        plots_dir = os.path.join(project_root, "data", "plots")
-        os.makedirs(plots_dir, exist_ok=True)
+        # Ensure the plots directory exists (cross-platform)
+        os.makedirs(PLOTS_DIR, exist_ok=True)
         safe_title = title.replace(" ", "_").replace("/", "_")
-        file_path = os.path.join(plots_dir, f"{safe_title}.png")
+        file_path = os.path.join(PLOTS_DIR, f"{safe_title}.png")
 
         # Save plot directly to disk
         plt.savefig(file_path, dpi=90)
@@ -227,7 +220,7 @@ def generate_insights(df, summary_stats):
     if not anomalies_found:
         insights.append("No significant anomalies detected (all values within 3 standard deviations).")
 
-    # Trend: Compare recent performance to overall average
+    # Trend: Compare recent performance to the overall average
     if reward_col in averages:
         recent_avg = df.tail(5)[reward_col].mean()
         overall_avg = averages[reward_col]
@@ -302,8 +295,8 @@ try:
         report_parts.append(f"- {insight}")
 
     # Write Markdown
-    os.makedirs(os.path.dirname(summary_md), exist_ok=True)
-    with open(summary_md, "w", encoding="utf-8") as f:
+    os.makedirs(os.path.dirname(SUMMARY_MD), exist_ok=True)
+    with open(SUMMARY_MD, "w", encoding="utf-8") as f:
         f.write("\n".join(report_parts))
     log("Successfully wrote summary report.")
 except Exception as e:

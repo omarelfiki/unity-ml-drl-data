@@ -3,13 +3,11 @@ Computing empirical reward thresholds per environment by parsing the CSV dataset
 """
 
 import json
-from pathlib import Path
 import numpy as np
 import pandas as pd
 from datetime import datetime
 
-DATA_FILE = Path(__file__).resolve().parent.parent.parent.parent / "data" / "combined_results.csv"
-THRESHOLDS_DIR = Path(__file__).resolve().parent.parent.parent.parent / "data" / "thresholds"
+from paths import CSV_FILE, THRESHOLD_DIR
 
 # Default Parameters
 TAIL_STEPS_DEFAULT = 50_000
@@ -34,11 +32,11 @@ def find_first_step_reaching_threshold(steps, rewards, threshold):
     return None
 
 def main():
-    if not DATA_FILE.exists():
-        print(f"Error: Data file not found: {DATA_FILE}")
+    if not CSV_FILE.exists():
+        print(f"Error: Data file not found: {CSV_FILE}")
         return
 
-    df = pd.read_csv(DATA_FILE)
+    df = pd.read_csv(CSV_FILE)
 
     if not {'environment', 'steps', 'reward_mean'}.issubset(df.columns):
         print("Error: CSV missing required columns 'environment', 'steps', or 'reward_mean'")
@@ -83,7 +81,7 @@ def main():
     payload = {
         "version": version_ts,
         "generated_at": datetime.now().isoformat(timespec="seconds"),
-        "source_file": str(DATA_FILE.resolve()),
+        "source_file": str(CSV_FILE.resolve()),
         "method": "empirical_reference",
         "alpha": ALPHA_DEFAULT,
         "window_last_steps": TAIL_STEPS_DEFAULT,
@@ -91,11 +89,11 @@ def main():
     }
 
     # Ensure output directory exists
-    THRESHOLDS_DIR.mkdir(parents=True, exist_ok=True)
+    THRESHOLD_DIR.mkdir(parents=True, exist_ok=True)
 
     # Write timestamped and "latest" files
-    timestamped_path = THRESHOLDS_DIR / f"thresholds_{version_ts}.json"
-    latest_path = THRESHOLDS_DIR / "latest_thresholds.json"
+    timestamped_path = THRESHOLD_DIR / f"thresholds_{version_ts}.json"
+    latest_path = THRESHOLD_DIR / "latest_thresholds.json"
 
     with open(timestamped_path, "w") as f:
         json.dump(payload, f, indent=2)

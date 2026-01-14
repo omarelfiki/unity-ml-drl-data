@@ -6,7 +6,7 @@ on:
       - main
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
-      - '**/combined_results.csv'
+      - '**/collected_results.csv'
   workflow_dispatch:
 
 permissions:
@@ -33,10 +33,10 @@ jobs:
           pip install pandas tabulate matplotlib numpy pathlib
 
       - name: Run validation script
-        run: python training/scripts/workflows/validate_results.py
+        run: python data/workflows/validate_results.py
 
       - name: Generate summary report
-        run: python training/scripts/workflows/results_summary.py
+        run: python data/workflows/results_summary.py
 
       - name: Determine target branch
         id: branch

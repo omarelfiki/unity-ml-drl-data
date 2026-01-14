@@ -1,11 +1,8 @@
 from pathlib import Path
 import pandas as pd
+from paths import CSV_FILE, SNAPSHOTS_DIR
 
-SCRIPT_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SCRIPT_DIR.parents[2]
-DATA_DIR = PROJECT_ROOT / "data"
-INPUT_CSV = DATA_DIR / "combined_results.csv"
-OUTPUT_CSV = DATA_DIR / "prediction_snapshot.csv"
+OUTPUT_CSV = SNAPSHOTS_DIR / "prediction_snapshot.csv"
 
 threshold_cols = [
     "threshold_value",
@@ -33,4 +30,4 @@ def filter_runs_with_threshold(input_path: Path, output_path: Path) -> None:
     df_filtered.to_csv(output_path, index=False)
 
 if __name__ == "__main__":
-    filter_runs_with_threshold(INPUT_CSV, OUTPUT_CSV)
+    filter_runs_with_threshold(CSV_FILE, OUTPUT_CSV)

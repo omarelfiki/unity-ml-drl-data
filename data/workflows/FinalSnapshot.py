@@ -4,7 +4,7 @@ import pandas as pd
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..'))
 data_dir = os.path.join(project_root, 'data')
-csv_path = os.path.join(data_dir, 'combined_results.csv')
+csv_path = os.path.join(data_dir, 'collected_results.csv')
 
 df = pd.read_csv(csv_path)
 thresholds = {

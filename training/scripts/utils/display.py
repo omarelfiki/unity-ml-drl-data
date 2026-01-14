@@ -90,7 +90,7 @@ def save_and_display_results(combined_data: dict, v: bool = False):
     data_dir = os.path.join(project_root, "data")
     os.makedirs(data_dir, exist_ok=True)
 
-    csv_file = os.path.join(data_dir, "combined_results.csv")
+    csv_file = os.path.join(data_dir, "collected_results.csv")
     normalized_data = {}
     for old_key, new_key in KEY_MAPPING.items():
         if old_key in string_data:
