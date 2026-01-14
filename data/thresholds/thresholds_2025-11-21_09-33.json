@@ -1,7 +1,7 @@
 {
   "version": "2025-11-21_09-33",
   "generated_at": "2025-11-21T09:33:28",
-  "source_file": "/home/runner/work/unity-ml-drl-data/unity-ml-drl-data/data/combined_results.csv",
+  "source_file": "/home/runner/work/unity-ml-drl-data/unity-ml-drl-data/data/collected_results.csv",
   "method": "empirical_reference",
   "alpha": 0.8,
   "window_last_steps": 50000,

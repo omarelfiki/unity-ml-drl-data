@@ -5,7 +5,7 @@ from scripts.config.constants import AUTO_COMMIT_BRANCH
 
 def auto_commit_results(v, commit_message):
     data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../data"))
-    files_to_commit = ["combined_results.csv", "combined_results.json"]
+    files_to_commit = ["collected_results.csv"]
 
     try:
         # Verify branch is selected branch
@@ -34,7 +34,7 @@ def auto_commit_results(v, commit_message):
                 return True
 
             # Allow dataset result files to be dirty (staged or unstaged)
-            allowed_dirty = ["data/combined_results.csv", "data/combined_results.json"]
+            allowed_dirty = ["data/collected_results.csv"]
             for allowed in allowed_dirty:
                 if allowed in line or allowed in raw_path:
                     return True

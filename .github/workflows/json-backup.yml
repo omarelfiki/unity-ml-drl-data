@@ -30,7 +30,7 @@ jobs:
           pip install pandas
 
       - name: Run JSON script
-        run: python training/scripts/workflows/backup_data.py
+        run: python data/workflows/backup_data.py
 
       - name: Commit & push updates
         uses: actions-js/push@master

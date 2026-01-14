@@ -19,13 +19,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Verify combined_results.csv exists
+      - name: Verify collected_results.csv exists
         run: |
-          if [ ! -f "data/combined_results.csv" ]; then
-            echo "No combined_results.csv found. Exiting."
+          if [ ! -f "data/collected_results.csv" ]; then
+            echo "No collected_results.csv found. Exiting."
             exit 1
           fi
-          echo "Found data/combined_results.csv"
+          echo "Found data/collected_results.csv"
 
       - name: Clone the shared dataset fork
         run: |
@@ -37,8 +37,8 @@ jobs:
 
       - name: Copy updated results to Group 6
         run: |
-          cp "data/combined_results.csv" "shared_repo/Group 6/combined_results.csv"
-          echo "Copied combined_results.csv to Group 6 folder."
+          cp "data/collected_results.csv" "shared_repo/Group 6/combined_results.csv"
+          echo "Copied collected_results.csv to Group 6 folder as combined_results.csv."
 
       - name: Commit and push updated results to fork
         run: |
