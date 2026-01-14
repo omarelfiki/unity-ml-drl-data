@@ -20,6 +20,8 @@ Inside your virtual enviroment created earlier, run from ```/training```:
 > Other settings and flags can be found in the -h/--help call
 > 
 > Replace ```configs_official/3DBall.yaml``` with the path to your training configuration file and  ```ball_test_001``` with a unique run ID for your training run. Check the contributing guidelines for naming conventions.
+
+See [```unity/README.md```](https://www.github.com/omarelfiki/unity-ml-drl-data/tree/main/unity/README.md) for more information on the `headless` installation guide.
      
 You should see output like this:
 
