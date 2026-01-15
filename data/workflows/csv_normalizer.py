@@ -1,8 +1,8 @@
 import pandas as pd
-from paths import CSV_FILE, NORMALIZED_DIR
+from paths import get_latest_snapshot, NORMALIZED_DIR
 from datetime import datetime
 
-INPUT_CSV = CSV_FILE
+INPUT_CSV = get_latest_snapshot()
 timestamp = datetime.now().strftime("%Y-%m-%d_%H_%M_%S")
 OUTPUT_CSV = NORMALIZED_DIR / f"normalized_results_{timestamp}.csv"
 
@@ -18,10 +18,14 @@ METRIC_COLS = [
 ]
 
 def main():
-    df = pd.read_csv(INPUT_CSV)
+    print(f"[INFO] Loading data from {INPUT_CSV}")
+    try:
+        df = pd.read_csv(INPUT_CSV)
+    except Exception as e:
+        raise ValueError(f"[ERROR]: Could not load CSV: {e}")
 
     if "environment" not in df.columns:
-        raise ValueError("Column 'environment' not found in CSV.")
+        raise ValueError("[ERROR]: Column 'environment' not found in CSV.")
 
     # Enforce numeric types for chosen metrics
     for col in METRIC_COLS:
