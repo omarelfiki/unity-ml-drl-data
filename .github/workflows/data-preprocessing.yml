@@ -29,7 +29,7 @@ jobs:
         run: python data/workflows/csv_snapshot.py
 
       - name: Run normalization script
-        run: python data/workflows/normalize_data.py
+        run: python data/workflows/csv_normalizer.py
 
       - name: Commit & push all updates
         uses: actions-js/push@master
