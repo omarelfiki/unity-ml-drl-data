@@ -24,11 +24,14 @@ def create_sub_paths(experiment_name, js):
     return experiment_dir
 
 
-def dump_and_save(pred_dir, out, clf, m_steps, m_time, metrics):
+def dump_and_save(pred_dir, out, clf, m_steps, m_time, metrics, env_name):
     print("[INFO]: Saving models and results....")
     save_errors = {}
 
-    csv_path = pred_dir / "models_prediction.csv"
+    env_dir = pred_dir / str(env_name)
+    env_dir.mkdir(parents=True, exist_ok=True)
+
+    csv_path = env_dir / "models_prediction.csv"
     try:
         out.to_csv(csv_path, index=False)
     except Exception as e:
@@ -41,7 +44,7 @@ def dump_and_save(pred_dir, out, clf, m_steps, m_time, metrics):
         (m_time, "linear_time_model.joblib"),
     ]
     for model, name in model_targets:
-        target = pred_dir / name
+        target = env_dir / name
         if model is None:
             save_errors[name] = "model_missing"
             continue
@@ -54,13 +57,13 @@ def dump_and_save(pred_dir, out, clf, m_steps, m_time, metrics):
     if save_errors:
         metrics["save_errors"] = save_errors
 
-    meta_path = pred_dir / "predict_metadata.json"
+    meta_path = env_dir / "predict_metadata.json"
     try:
         with open(meta_path, "w", encoding="utf-8") as f:
             json.dump(metrics, f, indent=2)
     except Exception as e:
         print(f"[ERROR]: failed to write metadata: {e}")
 
-    print(f"\n[INFO]: Saved results and models under: {pred_dir.resolve()}\n")
+    print(f"\n[INFO]: Saved results and models under: {env_dir.resolve()}\n")
     if save_errors:
         print(f"[WARNING]: Some save operations failed or were skipped: {json.dumps(save_errors, indent=2)}")
