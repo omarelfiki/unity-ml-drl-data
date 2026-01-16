@@ -57,7 +57,7 @@ def dump_and_save(pred_dir, out, clf, m_steps, m_time, metrics, env_name):
     if save_errors:
         metrics["save_errors"] = save_errors
 
-    meta_path = env_dir / "predict_metadata.json"
+    meta_path = env_dir / "metadata.json"
     try:
         with open(meta_path, "w", encoding="utf-8") as f:
             json.dump(metrics, f, indent=2)

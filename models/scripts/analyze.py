@@ -12,12 +12,7 @@ def analyze(actual, predicted, env= None):
     print(f"[INFO] Predictions Validated")
     total = len(df)
     total_filtered = 0
-    # if env:
-    #     df = df[df["environment"] == env]
-    #     total_filtered = total - len(df)
-    # else:
-    #     print("[INFO] No environment specified. Using all environments.")
-    analysis_dir = predicted_file.parent.parent / "analysis"
+    analysis_dir = predicted_file.parent.parent.parent / "analysis"
     analysis_dir.mkdir(exist_ok=True)
     analysis_file = analysis_dir / f"analysis.csv"
     metadata_file = analysis_dir / f"metadata.json"
@@ -27,12 +22,6 @@ def analyze(actual, predicted, env= None):
     return
 
 def verify_data(df):
-    df.columns = (
-        df.columns.astype(str)
-        .str.replace("\ufeff", "", regex=False)
-        .str.strip()
-    )
-
     required = [
         "run_reached_threshold",
         "pred_reach",
@@ -51,6 +40,6 @@ def verify_data(df):
             f"Available columns: {cols_preview}"
         )
 
-    for col in required:
+    for col in [c for c in required if c not in {"time_to_threshold", "steps_to_threshold"}]:
         if df[col].isna().any():
             raise AssertionError(f"Column `{col}` contains null values")

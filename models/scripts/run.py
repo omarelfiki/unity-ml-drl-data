@@ -6,7 +6,7 @@ from datetime import datetime
 from scripts.common_features import get_newest_data
 from scripts.predict import predict
 from scripts.cv_predict import run_cv
-from scripts.analysis.analyze import analyze
+from scripts.analyze import analyze
 
 def main(data = None, env = None, n_splits=5, test_size=0.2, seed=42, thresh=0.5, models_dir = None):
     if data is None:
@@ -23,21 +23,21 @@ def main(data = None, env = None, n_splits=5, test_size=0.2, seed=42, thresh=0.5
     except Exception as e:
         print(f"[ERROR]: Cross-validation failed: {e}")
         print("[INFO]: Continuing to prediction stage....")
-    print("[INFO]: Cross-validation Results saved to:", EXP_PATH, "/cv/")
+    print(f"[INFO]: Cross-validation Results saved to: {EXP_PATH}/cv/")
 
     print("[INFO]: Running prediction....")
     try :
         predict(EXP_PATH, data, env, test_size=test_size, seed=seed, thresh=thresh, models_dir=models_dir)
     except Exception as e:
-        print(f"[ERROR]: Prediction dailed: {e}")
+        print(f"[ERROR]: Prediction failed: {e}")
         print("[INFO]: Pipeline terminated.")
         return
 
-    print("[INFO]: Running Analysis....")
     if env is not None:
-        csv_path = f"{EXP_PATH}/predictions/{env}/models_prediction.csv"
+        print("[INFO]: Running Analysis....")
+        csv_path = f"experiments/{EXP_PATH}/predictions/{env}/models_prediction.csv"
         try:
-            analyze(csv_path)
+            analyze(data, csv_path, env)
             print("[INFO]: Analysis Results saved to:", EXP_PATH, "/analysis/")
         except Exception as e:
             print(f"[ERROR]: Analysis failed: {e}")
@@ -46,20 +46,19 @@ def main(data = None, env = None, n_splits=5, test_size=0.2, seed=42, thresh=0.5
     else:
         print("[INFO]: No env specified; analysis must be run per-environment.")
 
-
     print("[INFO]: Pipeline completed successfully.")
-    print("[INFO]: Results saved to:", EXP_PATH, "/")
-    return
+    print("[INFO]: All Results saved to:", EXP_PATH, "/")
+
 
 def prepare_directory(data_csv, env):
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
     version = data_csv.split("_")[-1].split(".")[0]
-    env_tag = env if env is not None else "ALL"
+    env_tag = env if env is not None else "All"
     experiment_name = f"exp_{env_tag}_{version}_{timestamp}"
     user = os.environ.get("USER")
     osv = os.environ.get("OS")
     print("[INFO]: Creating experiment directory:", experiment_name)
-    js = {"name": env, "user": user, "os": osv ,"data_csv": data_csv, "env": env, "timestamp": timestamp, "version": version, "experiment_name": experiment_name}
+    js = {"name": env_tag, "user": user, "os": osv ,"data_csv": data_csv, "env": env_tag, "timestamp": timestamp, "version": version, "experiment_name": experiment_name}
     utils.create_sub_paths(experiment_name, js)
     return experiment_name
 
