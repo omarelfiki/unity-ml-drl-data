@@ -12,8 +12,7 @@ def main(data = None, env = None, n_splits=5, test_size=0.2, seed=42, thresh=0.5
     if data is None:
         data = get_newest_data()
     if env is None:
-        env = "3DBall"
-        print("[INFO]: No environment specified. Using default:", env)
+        print("[INFO]: No environment specified. Running for ALL environments.")
 
     EXP_PATH = prepare_directory(data, env)
     print("[INFO]: Running pipeline for:", EXP_PATH)
@@ -35,14 +34,18 @@ def main(data = None, env = None, n_splits=5, test_size=0.2, seed=42, thresh=0.5
         return
 
     print("[INFO]: Running Analysis....")
-    csv_path = EXP_PATH + "/predictions/models_prediction.csv"
-    try:
-        analyze(csv_path)
-        print("[INFO]: Analysis Results saved to:", EXP_PATH, "/analysis/")
-    except Exception as e:
-        print(f"[ERROR]: Analysis failed: {e}")
-        print("[INFO]: Pipeline terminated.")
-        return
+    if env is not None:
+        csv_path = f"{EXP_PATH}/predictions/{env}/models_prediction.csv"
+        try:
+            analyze(csv_path)
+            print("[INFO]: Analysis Results saved to:", EXP_PATH, "/analysis/")
+        except Exception as e:
+            print(f"[ERROR]: Analysis failed: {e}")
+            print("[INFO]: Pipeline terminated.")
+            return
+    else:
+        print("[INFO]: No env specified; analysis must be run per-environment.")
+
 
     print("[INFO]: Pipeline completed successfully.")
     print("[INFO]: Results saved to:", EXP_PATH, "/")
@@ -51,11 +54,12 @@ def main(data = None, env = None, n_splits=5, test_size=0.2, seed=42, thresh=0.5
 def prepare_directory(data_csv, env):
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
     version = data_csv.split("_")[-1].split(".")[0]
-    experiment_name = f"exp_{env}_{version}_{timestamp}"
+    env_tag = env if env is not None else "ALL"
+    experiment_name = f"exp_{env_tag}_{version}_{timestamp}"
     user = os.environ.get("USER")
     osv = os.environ.get("OS")
     print("[INFO]: Creating experiment directory:", experiment_name)
-    js = {"name": env, "user": user, "os": osv ,"data_csv": data_csv, "env": env, "timestamp": timestamp, "version": version, "experiment_name": experiment_name, "args": f"{args}"}
+    js = {"name": env, "user": user, "os": osv ,"data_csv": data_csv, "env": env, "timestamp": timestamp, "version": version, "experiment_name": experiment_name}
     utils.create_sub_paths(experiment_name, js)
     return experiment_name
 
@@ -70,7 +74,7 @@ if __name__ == "__main__":
     parser.add_argument("--env", dest="env", type=str, default=None, help="Environment to use (default: None).")
     parser.add_argument("--models-dir", dest="models_dir", type=str, default=None,
                         help="Directory containing standard model names: `logistic_reach_model.joblib`, `linear_steps_model.joblib`, `linear_time_model.joblib`.")
-    parser.add_argument("--data-csv, type=str", dest="data_csv", default=None,
+    parser.add_argument("--data-csv", type=str, dest="data_csv", default=None,
                         help="Path to CSV containing data. Defaults to latest data in ../data/normalized/.")
     args = parser.parse_args()
     main(test_size=args.test_size, seed=args.seed, thresh=args.thresh, models_dir=args.models_dir, data=args.data_csv,

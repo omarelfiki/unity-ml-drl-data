@@ -10,10 +10,11 @@ from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-ENV = "3DBall"
+ENV = None
 # Configurations
 NUM_FEATS = [
-    "steps", "learning_rate", "batch_size", "buffer_size", "epochs", "num_agents", "seed",
+    "steps", "learning_rate", "batch_size", "buffer_size", "epochs", "num_agents", "seed", 
+    "average_cpu", "average_ram", 
     "early_reward_mean", "p_loss_mean", "v_loss_mean", "entropy_mean",
 ]
 CAT_FEATS = ["algorithm"]
@@ -42,10 +43,14 @@ def load_df(path=None, env=ENV):
     if path is None:
         path = get_newest_data()
     print("[INFO]: Loading data from: ", path)
+    
     df = pd.read_csv(path)
     for c in ["steps_to_threshold", "time_to_threshold"]:
         df[c] = pd.to_numeric(df[c], errors="coerce")
     df["run_reached_threshold"] = ((df["steps_to_threshold"] > 0) & (df["time_to_threshold"] > 0)).astype(int)
+
+    if env is None:
+        return df.copy()
     return df[df["environment"] == env].copy()
 
 def make_preprocess(df, num_feats=NUM_FEATS, cat_feats=CAT_FEATS):
