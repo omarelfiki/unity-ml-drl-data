@@ -51,6 +51,9 @@ def filter_runs_with_threshold(input_path: Path, output_path: Path) -> None:
     if missing:
         raise ValueError(f"[ERROR]: Missing expected columns in CSV: {missing}")
 
+    # remove control runs
+    df = df[df["threshold_version"].fillna("").astype(str).str.strip() != ""]
+
     # normalize threshold-related columns
     df["threshold_value"] = df.apply(define_thresholds, axis=1)
 
@@ -65,10 +68,6 @@ def filter_runs_with_threshold(input_path: Path, output_path: Path) -> None:
 
     df["run_reached_threshold"] = df.apply(identify_success, axis=1)
 
-    # keep rows with actual evaluated threshold outcome
-    mask = df["steps_to_threshold"].notna() | df["time_to_threshold"].notna()
-    df_filtered = df[mask]
-
     # columns to keep for prediction
     columns_to_keep = [
         "run_id","environment","seed","algorithm","learning_rate","steps",
@@ -79,9 +78,9 @@ def filter_runs_with_threshold(input_path: Path, output_path: Path) -> None:
         "entropy_mean_step","step_interval","threshold_value","steps_to_threshold",
         "time_to_threshold","threshold_version","run_reached_threshold",
     ]
-    columns_to_keep = [c for c in columns_to_keep if c in df_filtered.columns]
+    columns_to_keep = [c for c in columns_to_keep if c in df.columns]
 
-    snapshot_df = df_filtered[columns_to_keep]
+    snapshot_df = df[columns_to_keep]
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     print(f"[INFO]: Writing filtered CSV to: {output_path}")

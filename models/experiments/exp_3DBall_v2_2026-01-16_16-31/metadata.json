@@ -1,0 +1,11 @@
+{
+  "name": "3DBall",
+  "user": "omarelfiki",
+  "os": null,
+  "data_csv": "../data/normalized/normalized_v2.csv",
+  "env": "3DBall",
+  "timestamp": "2026-01-16_16-31",
+  "version": "v2",
+  "experiment_name": "exp_3DBall_v2_2026-01-16_16-31",
+  "args": "Namespace(test_size=0.2, seed=42, thresh=0.5, env=None, models_dir=None, data_csv=None)"
+}
