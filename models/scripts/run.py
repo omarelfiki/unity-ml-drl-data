@@ -55,7 +55,7 @@ def prepare_directory(data_csv, env):
     user = os.environ.get("USER")
     osv = os.environ.get("OS")
     print("[INFO]: Creating experiment directory:", experiment_name)
-    js = {"user": user, "os": osv ,"data_csv": data_csv, "env": env, "timestamp": timestamp, "version": version, "experiment_name": experiment_name, "args": f"{args}"}
+    js = {"name": env, "user": user, "os": osv ,"data_csv": data_csv, "env": env, "timestamp": timestamp, "version": version, "experiment_name": experiment_name, "args": f"{args}"}
     utils.create_sub_paths(experiment_name, js)
     return experiment_name
 
