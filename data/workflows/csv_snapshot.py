@@ -86,7 +86,7 @@ def filter_runs_with_threshold(input_path: Path, output_path: Path) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     print(f"[INFO]: Writing filtered CSV to: {output_path}")
     if not output_path.exists():
-        df_filtered.to_csv(output_path, index=False)
+        snapshot_df.to_csv(output_path, index=False)
     else:
         print("[WARNING]: Output file already exists, skipping write.")
 
