@@ -1,10 +1,11 @@
 from pathlib import Path
 import pandas as pd
-from datetime import datetime
 from paths import CSV_FILE, SNAPSHOTS_DIR
+from paths import get_latest_snapshot
 
-timestamp = datetime.now().strftime("%Y-%m-%d_%H_%M_%S")
-OUTPUT_CSV = SNAPSHOTS_DIR / f"prediction_snapshot_{timestamp}.csv"
+# Timestamped filename
+version = get_latest_snapshot(1)
+OUTPUT_CSV = SNAPSHOTS_DIR / f"snapshot_v{version}.csv"
 
 threshold_defaults = {
     "3DBall": 2.56576,
@@ -48,7 +49,7 @@ def filter_runs_with_threshold(input_path: Path, output_path: Path) -> None:
 
     missing = [c for c in threshold_cols if c not in df.columns]
     if missing:
-        raise ValueError(f"Missing expected columns in CSV: {missing}")
+        raise ValueError(f"[ERROR]: Missing expected columns in CSV: {missing}")
 
     # normalize threshold-related columns
     df["threshold_value"] = df.apply(define_thresholds, axis=1)
@@ -83,7 +84,11 @@ def filter_runs_with_threshold(input_path: Path, output_path: Path) -> None:
     snapshot_df = df_filtered[columns_to_keep]
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    snapshot_df.to_csv(output_path, index=False)
+    print(f"[INFO]: Writing filtered CSV to: {output_path}")
+    if not output_path.exists():
+        snapshot_df.to_csv(output_path, index=False)
+    else:
+        print("[WARNING]: Output file already exists, skipping write.")
 
 if __name__ == "__main__":
     filter_runs_with_threshold(CSV_FILE, OUTPUT_CSV)

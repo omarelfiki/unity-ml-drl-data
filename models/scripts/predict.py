@@ -1,21 +1,16 @@
 import json
 from pathlib import Path
 import numpy as np
-import argparse
 from joblib import load
 from sklearn.model_selection import train_test_split
-from datetime import datetime
 from scripts.common_features import load_df
 import scripts.logistic as log
 import scripts.linear as lin
 import scripts.utils as utils
 
-
-def main(test_size=0.2, seed=42, thresh=0.5, models_dir = None):
+def predict(path, data, env, test_size=0.2, seed=42, thresh=0.5, models_dir = None):
     print("[INFO]: Loading dataset splits and grouping features....")
-    df = load_df()
-    ts = datetime.now().strftime("%Y-%m-%d_%H-%M")
-
+    df = load_df(data, env)
     # One shared split for both stages
     y = df["run_reached_threshold"].astype(int).values
     train_df, test_df = train_test_split(df, test_size=test_size, random_state=seed, stratify=y)
@@ -165,23 +160,8 @@ def main(test_size=0.2, seed=42, thresh=0.5, models_dir = None):
     metrics = {"classifier": clf_metrics, "regressors": reg_metrics}
     print("[INFO]: Metrics:")
     print(json.dumps(metrics, indent=2))
-
+    pred_path = "experiments" / Path(path) / "predictions"
     try:
-        utils.dump_and_save(ts, out, clf, m_steps, m_time, metrics)
+        utils.dump_and_save(pred_path, out, clf, m_steps, m_time, metrics)
     except Exception as e:
         print(f"[ERROR]: failed to save results: {e}")
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Two-stage prediction pipeline for ML-Agents Results.")
-    parser.add_argument("--test_size", type=float, default=0.2,
-                        help="Fraction of data used as test set (default: 0.2).")
-    parser.add_argument("--seed", type=int, default=42,
-                        help="Random seed for reproducible splitting (default: 42).")
-    parser.add_argument("--thresh", type=float, default=0.5,
-                        help="Threshold for pred_reach from p_reach (default: 0.5).")
-    parser.add_argument("--models-dir", dest="models_dir", type=str, default=None,
-                        help="Directory containing standard model names: `logistic_reach_model.joblib`, `linear_steps_model.joblib`, `linear_time_model.joblib`.")
-
-    args = parser.parse_args()
-    main(test_size=args.test_size, seed=args.seed, thresh=args.thresh, models_dir=args.models_dir)
