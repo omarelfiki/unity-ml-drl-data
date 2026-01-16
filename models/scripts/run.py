@@ -1,0 +1,40 @@
+import argparse
+import scripts.utils as utils
+from datetime import datetime
+from scripts.common_features import get_newest_data
+from scripts.predict import predict
+
+def main(data = None, env = None, test_size=0.2, seed=42, thresh=0.5, models_dir = None):
+    if data is None:
+        data = get_newest_data()
+    if env is None:
+        env = "3DBall"
+        print("[INFO]: No environment specified. Using default:", env)
+    EXP_PATH = prepare_directory(data, env)
+    predict(EXP_PATH, data, env, test_size=test_size, seed=seed, thresh=thresh, models_dir=models_dir)
+
+def prepare_directory(data_csv, env):
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
+    version = data_csv.split("_")[-1].split(".")[0]
+    experiment_name = f"exp_{env}_{version}_{timestamp}"
+    print("[INFO]: Creating experiment directory:", experiment_name)
+    js = {"data_csv": data_csv, "env": env, "timestamp": timestamp, "version": version, "experiment_name": experiment_name, "args": f"{args}"}
+    utils.create_sub_paths(experiment_name, js)
+    return experiment_name
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Multi-stage prediction and analysis pipeline for ML-Agents Results.")
+    parser.add_argument("--test_size", type=float, default=0.2,
+                        help="Fraction of data used as test set (default: 0.2).")
+    parser.add_argument("--seed", type=int, default=42,
+                        help="Random seed for reproducible splitting (default: 42).")
+    parser.add_argument("--thresh", type=float, default=0.5,
+                        help="Threshold for pred_reach from p_reach (default: 0.5).")
+    parser.add_argument("--env", dest="env", type=str, default=None, help="Environment to use (default: None).")
+    parser.add_argument("--models-dir", dest="models_dir", type=str, default=None,
+                        help="Directory containing standard model names: `logistic_reach_model.joblib`, `linear_steps_model.joblib`, `linear_time_model.joblib`.")
+    parser.add_argument("--data-csv, type=str", dest="data_csv", default=None,
+                        help="Path to CSV containing data. Defaults to latest data in ../data/normalized/.")
+    args = parser.parse_args()
+    main(test_size=args.test_size, seed=args.seed, thresh=args.thresh, models_dir=args.models_dir, data=args.data_csv,
+         env=args.env)

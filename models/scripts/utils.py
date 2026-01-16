@@ -2,22 +2,33 @@ import json
 from pathlib import Path
 from joblib import dump
 
-def dump_and_save(ts, out, clf, m_steps, m_time, metrics):
+EXP_DIR = Path("experiments")
+
+def create_sub_paths(experiment_name, js):
+    experiment_dir = EXP_DIR / experiment_name
+    experiment_dir.mkdir(parents=True, exist_ok=True)
+
+    js_path = experiment_dir / "metadata.json"
+    with open(js_path, "w", encoding="utf-8") as f:
+        json.dump(js, f, indent=2)
+
+    CV_DIR = experiment_dir / "cv"
+    CV_DIR.mkdir(parents=True, exist_ok=True)
+
+    PRED_DIR = experiment_dir / "predictions"
+    PRED_DIR.mkdir(parents=True, exist_ok=True)
+
+    ANALYSIS_DIR = experiment_dir / "analysis"
+    ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
+
+    return experiment_dir
+
+
+def dump_and_save(pred_dir, out, clf, m_steps, m_time, metrics):
     print("[INFO]: Saving models and results....")
-    # Save models for later inference
-    models_dir = Path("collected_models")
-    models_dir.mkdir(parents=True, exist_ok=True)
-
-    version_dir = models_dir / f"version_{ts}"
-    suffix = 1
-    while version_dir.exists():
-        version_dir = models_dir / f"version_{ts}_{suffix}"
-        suffix += 1
-    version_dir.mkdir(parents=True, exist_ok=True)
-
     save_errors = {}
 
-    csv_path = version_dir / "models_prediction.csv"
+    csv_path = pred_dir / "models_prediction.csv"
     try:
         out.to_csv(csv_path, index=False)
     except Exception as e:
@@ -30,7 +41,7 @@ def dump_and_save(ts, out, clf, m_steps, m_time, metrics):
         (m_time, "linear_time_model.joblib"),
     ]
     for model, name in model_targets:
-        target = version_dir / name
+        target = pred_dir / name
         if model is None:
             save_errors[name] = "model_missing"
             continue
@@ -43,13 +54,13 @@ def dump_and_save(ts, out, clf, m_steps, m_time, metrics):
     if save_errors:
         metrics["save_errors"] = save_errors
 
-    meta_path = version_dir / "predict_metadata.json"
+    meta_path = pred_dir / "predict_metadata.json"
     try:
         with open(meta_path, "w", encoding="utf-8") as f:
             json.dump(metrics, f, indent=2)
     except Exception as e:
         print(f"[ERROR]: failed to write metadata: {e}")
 
-    print(f"\n[INFO]: Saved results and models under: collected_models/version_{ts}")
+    print(f"\n[INFO]: Saved results and models under: {pred_dir.resolve()}\n")
     if save_errors:
         print(f"[WARNING]: Some save operations failed or were skipped: {json.dumps(save_errors, indent=2)}")

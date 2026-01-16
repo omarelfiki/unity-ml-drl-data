@@ -1,10 +1,10 @@
 import pandas as pd
-from paths import get_latest_snapshot, NORMALIZED_DIR
+from paths import get_latest_snapshot, NORMALIZED_DIR, SNAPSHOTS_DIR
 from datetime import datetime
 
-INPUT_CSV = get_latest_snapshot()
-timestamp = datetime.now().strftime("%Y-%m-%d_%H_%M_%S")
-OUTPUT_CSV = NORMALIZED_DIR / f"normalized_results_{timestamp}.csv"
+VERSION = get_latest_snapshot(2)
+INPUT_CSV = SNAPSHOTS_DIR / f"snapshot_v{VERSION}.csv"
+OUTPUT_CSV = NORMALIZED_DIR / f"normalized_v{VERSION}.csv"
 
 # Metrics to z-score
 METRIC_COLS = [
@@ -54,7 +54,11 @@ def main():
             z = (col_vals - mean) / std
             norm_df.loc[idx, col] = z
 
-    norm_df.to_csv(OUTPUT_CSV, index=False)
+    if not OUTPUT_CSV.exists():
+        norm_df.to_csv(OUTPUT_CSV, index=False)
+    else:
+        V_OUTPUT_CSV = OUTPUT_CSV.with_name(f"{OUTPUT_CSV.stem}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv")
+        norm_df.to_csv(V_OUTPUT_CSV, index=False)
     print(f"[INFO] Per-environment z-scored results saved to {OUTPUT_CSV}")
 
 if __name__ == "__main__":
