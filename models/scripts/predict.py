@@ -158,8 +158,7 @@ def predict(path, data, env, test_size=0.2, seed=42, thresh=0.5, models_dir = No
             "steps"]
 
     metrics = {"classifier": clf_metrics, "regressors": reg_metrics}
-    print("[INFO]: Metrics:")
-    print(json.dumps(metrics, indent=2))
+    print("[INFO]: Metrics Saved")
     pred_path = "experiments" / Path(path) / "predictions"
     try:
         utils.dump_and_save(pred_path, out, clf, m_steps, m_time, metrics)
