@@ -1,24 +1,34 @@
 import json
 from pathlib import Path
-
 import pandas as pd
 
-
-def analyze(actual, predicted, env= None):
-    predicted_file = Path(predicted)
-    df = pd.read_csv(predicted_file)
-    print(f"[INFO] Predictions: {predicted_file}")
-    verify_data(df)
-    print(f"[INFO] Predictions Validated")
-    total = len(df)
-    total_filtered = 0
-    analysis_dir = predicted_file.parent.parent.parent / "analysis"
-    analysis_dir.mkdir(exist_ok=True)
-    analysis_file = analysis_dir / f"analysis.csv"
-    metadata_file = analysis_dir / f"metadata.json"
-    js = {"environment": env if env else "all", "total_samples": total, "filtered_samples": total_filtered, "samples per environment": df["environment"].value_counts().to_dict(), "% reaching threshold": len([df["pred_reach"] == 1]) / len(df) * 100}
+def analyze(exp_path, actual, env= None, skipped=None):
+    df_all = pd.read_csv(actual)
+    analysis_dir = "experiments" / Path(exp_path) / "analysis"
+    total = len(df_all)
+    js = {"environment": env if env else "all", "total_samples": total,
+          "samples per environment": df_all["environment"].value_counts().to_dict(),
+          "% reaching threshold": len([df_all["run_reached_threshold"] == 1]) / len(df_all) * 100}
+    metadata_file = Path(analysis_dir) / "metadata.json"
     json.dump(js, metadata_file.open("w"), indent=2)
-    df.to_csv(analysis_file, index=False)
+
+    envs = sorted(df_all["environment"].dropna().unique().tolist())
+    if skipped:
+        for skip in skipped:
+            envs.remove(skip)
+    if env is not None:
+        envs = [env]
+    for env in envs:
+        predicted_file = "experiments" / Path(exp_path) / "predictions" / f"{env}" / "models_prediction.csv"
+        predicted = Path(predicted_file)
+        df = pd.read_csv(predicted)
+        print(f"[INFO] Predictions: {predicted_file}")
+        verify_data(df)
+        print(f"[INFO] Predictions Validated")
+        adir = analysis_dir / env
+        adir.mkdir(parents=True)
+        analysis_file = adir / "analysis.csv"
+        df.to_csv(analysis_file, index=False)
     return
 
 def verify_data(df):

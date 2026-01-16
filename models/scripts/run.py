@@ -27,24 +27,20 @@ def main(data = None, env = None, n_splits=5, test_size=0.2, seed=42, thresh=0.5
 
     print("[INFO]: Running prediction....")
     try :
-        predict(EXP_PATH, data, env, test_size=test_size, seed=seed, thresh=thresh, models_dir=models_dir)
+        skipped = predict(EXP_PATH, data, env, test_size=test_size, seed=seed, thresh=thresh, models_dir=models_dir)
     except Exception as e:
         print(f"[ERROR]: Prediction failed: {e}")
         print("[INFO]: Pipeline terminated.")
         return
 
-    if env is not None:
-        print("[INFO]: Running Analysis....")
-        csv_path = f"experiments/{EXP_PATH}/predictions/{env}/models_prediction.csv"
-        try:
-            analyze(data, csv_path, env)
-            print("[INFO]: Analysis Results saved to:", EXP_PATH, "/analysis/")
-        except Exception as e:
-            print(f"[ERROR]: Analysis failed: {e}")
-            print("[INFO]: Pipeline terminated.")
-            return
-    else:
-        print("[INFO]: No env specified; analysis must be run per-environment.")
+    print("[INFO]: Running Analysis....")
+    try:
+        analyze(EXP_PATH, data, env, skipped)
+        print(f"[INFO]: Analysis Results saved to: {EXP_PATH}/analysis/")
+    except Exception as e:
+        print(f"[ERROR]: Analysis failed: {e}")
+        print("[INFO]: Pipeline terminated.")
+        return
 
     print("[INFO]: Pipeline completed successfully.")
     print("[INFO]: All Results saved to:", EXP_PATH, "/")
