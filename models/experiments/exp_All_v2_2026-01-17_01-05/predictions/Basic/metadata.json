@@ -1,0 +1,67 @@
+{
+  "name": "Basic",
+  "version": 1,
+  "classifier": {
+    "n_train": 24,
+    "n_test": 7,
+    "features": [
+      "steps",
+      "learning_rate",
+      "batch_size",
+      "buffer_size",
+      "epochs",
+      "num_agents",
+      "seed",
+      "average_cpu",
+      "average_ram",
+      "early_reward_mean",
+      "p_loss_mean",
+      "v_loss_mean",
+      "entropy_mean",
+      "algorithm"
+    ],
+    "threshold": 0.5,
+    "accuracy": 1.0,
+    "roc_auc": 1.0,
+    "confusion_matrix": [
+      [
+        1,
+        0
+      ],
+      [
+        0,
+        6
+      ]
+    ]
+  },
+  "regressors": {
+    "n_train_reached": 22,
+    "n_test_reached": 6,
+    "features": [
+      "steps",
+      "learning_rate",
+      "batch_size",
+      "buffer_size",
+      "epochs",
+      "num_agents",
+      "seed",
+      "average_cpu",
+      "average_ram",
+      "early_reward_mean",
+      "p_loss_mean",
+      "v_loss_mean",
+      "entropy_mean",
+      "algorithm"
+    ],
+    "steps": {
+      "mae": 1300.835400963948,
+      "rmse": 1470.573651082868,
+      "r2": 0.8791100511221567
+    },
+    "time": {
+      "mae": 7.141453636753582,
+      "rmse": 8.941584725611987,
+      "r2": 0.9103493572236847
+    }
+  }
+}

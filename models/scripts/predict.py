@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 import numpy as np
 from joblib import load
@@ -8,14 +7,14 @@ import scripts.logistic as log
 import scripts.linear as lin
 import scripts.utils as utils
 
-def predict(path, data, env, test_size=0.2, seed=42, thresh=0.5, models_dir = None):
+def predict(path, data, env, test_size=0.2, seed=42, thresh=0.5, models_dir = None) -> list[str]:
     print("[INFO]: Loading dataset splits and grouping features....")
-    
-
     df_all = load_df(path=data, env=None)
     envs = sorted(df_all["environment"].dropna().unique().tolist())
     if env is not None:
         envs = [env]
+
+    skipped = []
 
     for env_name in envs:
         print(f"\n[INFO]: ===== Environment: {env_name} =====")
@@ -25,6 +24,7 @@ def predict(path, data, env, test_size=0.2, seed=42, thresh=0.5, models_dir = No
         y = df["run_reached_threshold"].astype(int).values
         if len(np.unique(y)) < 2:
             print(f"[SKIP]: {env_name} has only one class in run_reached_threshold.")
+            skipped.append(env_name)
             continue
     
         train_df, test_df = train_test_split(df, test_size=test_size, random_state=seed, stratify=y)
@@ -56,20 +56,24 @@ def predict(path, data, env, test_size=0.2, seed=42, thresh=0.5, models_dir = No
                     if feat_names:
                         try:
                             proba = np.asarray(clf.predict_proba(test_df[feat_names])[:, 1])
-                        except Exception:
+                        except Exception as e:
+                            print(f"[WARNING]: predict_proba failed, trying predict: {e}")
                             proba = None
                     if proba is None:
                         try:
                             proba = np.asarray(clf.predict_proba(test_df)[:, 1])
-                        except Exception:
+                        except Exception as e:
+                            print(f"[WARNING]: predict_proba failed, trying predict: {e}")
                             try:
                                 proba = np.asarray(clf.predict(test_df))
-                            except Exception:
+                            except Exception as e:
+                                print(f"[WARNING]: predict failed: {e}")
                                 proba = None
                     if proba is not None:
                         try:
                             pred = (proba >= thresh).astype(int)
-                        except Exception:
+                        except Exception as e:
+                            print(f"[WARNING]: thresholding failed: {e}")
                             pred = np.zeros(len(proba), dtype=int)
                     feats = feat_names
                     print(f"[INFO]: Loaded classifier from ` {clf_path} `")
@@ -143,7 +147,8 @@ def predict(path, data, env, test_size=0.2, seed=42, thresh=0.5, models_dir = No
         if pred is None:
             try:
                 pred = (proba >= thresh).astype(int)
-            except Exception:
+            except Exception as e:
+                print(f"[WARNING]: thresholding failed: {e}")
                 pred = np.zeros(len(proba), dtype=int)
 
         out = test_df.copy()
@@ -171,13 +176,13 @@ def predict(path, data, env, test_size=0.2, seed=42, thresh=0.5, models_dir = No
             out["expected_steps"] = out["p_reach"] * out["pred_steps_to_threshold_cond"] + (1 - out["p_reach"]) * out[
                 "steps"]
 
-        metrics = {"classifier": clf_metrics, "regressors": reg_metrics}
+        metrics = {"name": env_name,"version": 1, "classifier": clf_metrics, "regressors": reg_metrics}
         print("[INFO]: Metrics Saved")
         pred_path = Path("experiments") / Path(path) / "predictions"
         pred_path.mkdir(parents=True, exist_ok=True)
-        # pred_path = "experiments" / Path(path) / "predictions"
-        # pred_path = Path("experiments") / path / "predictions"
         try:
             utils.dump_and_save(pred_path, out, clf, m_steps, m_time, metrics, env_name)
         except Exception as e:
             print(f"[ERROR]: failed to save results: {e}")
+
+    return skipped

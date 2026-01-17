@@ -6,14 +6,18 @@ from sklearn.linear_model import LogisticRegression, LinearRegression
 from sklearn.model_selection import GroupKFold
 from sklearn.metrics import mean_squared_error, mean_absolute_error, accuracy_score, f1_score
 from scripts.common_features import NUM_FEATS
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
 def build_classifier(seed):
-    return LogisticRegression(
-        max_iter=1000,
-        random_state=seed,
-        class_weight="balanced",
-        solver="lbfgs",
-    )
+    return Pipeline([
+        ("scaler", StandardScaler()),
+        ("logreg", LogisticRegression(
+            max_iter=10000,
+            class_weight="balanced",
+            solver="lbfgs"
+        ))
+    ])
 
 def build_regressors(seed):
     reg_steps = LinearRegression(n_jobs=-1)
@@ -127,7 +131,7 @@ def run_cv(path, df, n_splits=5, seed=42):
 def save_cv_results(results, path):
     cv_dir = "experiments" / Path(path) / "cv"
 
-    with open(cv_dir / "metrics.json", "w") as f:
+    with open(cv_dir / "metadata.json", "w") as f:
         json.dump(results, f, indent=2)
 
     out_path = cv_dir / f"folds.csv"
