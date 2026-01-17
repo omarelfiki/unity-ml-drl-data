@@ -1,0 +1,6 @@
+,Predicted 0,Predicted 1,3DBall
+Actual 0,53.0,1.0,
+Actual 1,61.0,633.0,
+Accuracy,,,0.9171122994652406
+Precision,,,0.998422712933754
+ROC AUC,,,0.946792613939588
