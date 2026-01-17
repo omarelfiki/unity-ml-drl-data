@@ -34,10 +34,14 @@ jobs:
 
       - name: Show experiment location
         run: |
-          echo "## Model Experiment Output" >> $GITHUB_STEP_SUMMARY
+          echo "## Models CLI Experiment Output" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Experiment directory:**" >> $GITHUB_STEP_SUMMARY
-          echo "\`${{ steps.run_models.outputs.experiment_dir }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Contents:**" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          ls -R models/experiments/${{ steps.run_models.outputs.experiment_dir }} >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "You can download the experiment results as an artifact from the 'Artifacts' section below." >> $GITHUB_STEP_SUMMARY
 
       - name: Upload experiment results
         uses: actions/upload-artifact@v4
