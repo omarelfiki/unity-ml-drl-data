@@ -1,0 +1,67 @@
+{
+  "name": "3DBall",
+  "version": 1,
+  "classifier": {
+    "n_train": 2988,
+    "n_test": 748,
+    "features": [
+      "steps",
+      "learning_rate",
+      "batch_size",
+      "buffer_size",
+      "epochs",
+      "num_agents",
+      "seed",
+      "average_cpu",
+      "average_ram",
+      "early_reward_mean",
+      "p_loss_mean",
+      "v_loss_mean",
+      "entropy_mean",
+      "algorithm"
+    ],
+    "threshold": 0.5,
+    "accuracy": 0.9171122994652406,
+    "roc_auc": 0.9802273455011208,
+    "confusion_matrix": [
+      [
+        53,
+        1
+      ],
+      [
+        61,
+        633
+      ]
+    ]
+  },
+  "regressors": {
+    "n_train_reached": 2772,
+    "n_test_reached": 694,
+    "features": [
+      "steps",
+      "learning_rate",
+      "batch_size",
+      "buffer_size",
+      "epochs",
+      "num_agents",
+      "seed",
+      "average_cpu",
+      "average_ram",
+      "early_reward_mean",
+      "p_loss_mean",
+      "v_loss_mean",
+      "entropy_mean",
+      "algorithm"
+    ],
+    "steps": {
+      "mae": 9471.143371728687,
+      "rmse": 15546.822958535258,
+      "r2": 0.7755699036683847
+    },
+    "time": {
+      "mae": 8.866254490919324,
+      "rmse": 13.189383949709963,
+      "r2": 0.796150797633937
+    }
+  }
+}

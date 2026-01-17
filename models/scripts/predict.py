@@ -176,12 +176,10 @@ def predict(path, data, env, test_size=0.2, seed=42, thresh=0.5, models_dir = No
             out["expected_steps"] = out["p_reach"] * out["pred_steps_to_threshold_cond"] + (1 - out["p_reach"]) * out[
                 "steps"]
 
-        metrics = {"classifier": clf_metrics, "regressors": reg_metrics}
+        metrics = {"name": env_name,"version": 1, "classifier": clf_metrics, "regressors": reg_metrics}
         print("[INFO]: Metrics Saved")
         pred_path = Path("experiments") / Path(path) / "predictions"
         pred_path.mkdir(parents=True, exist_ok=True)
-        # pred_path = "experiments" / Path(path) / "predictions"
-        # pred_path = Path("experiments") / path / "predictions"
         try:
             utils.dump_and_save(pred_path, out, clf, m_steps, m_time, metrics, env_name)
         except Exception as e:

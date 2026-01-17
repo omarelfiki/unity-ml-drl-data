@@ -1,0 +1,14 @@
+{
+  "name": "all on dataset",
+  "version": "v2",
+  "total_samples": 3847,
+  "samples per environment": {
+    "3DBall": 3736,
+    "Basic": 31,
+    "Hallway": 20,
+    "Crawler": 20,
+    "PushBlock": 20,
+    "BigWallJump": 20
+  },
+  "% reaching threshold": 92.77358981024176
+}
