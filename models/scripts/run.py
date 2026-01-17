@@ -44,6 +44,7 @@ def main(data = None, env = None, n_splits=5, test_size=0.2, seed=42, thresh=0.5
 
     print("[INFO]: Pipeline completed successfully.")
     print("[INFO]: All Results saved to:", EXP_PATH, "/")
+    print(f"EXPERIMENT_DIR={EXP_PATH}")
 
 
 def prepare_directory(data_csv, env):

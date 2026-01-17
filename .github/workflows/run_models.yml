@@ -23,13 +23,20 @@ jobs:
           pip install pandas matplotlib numpy pathlib scikit-learn matplotlib joblib
 
       - name: Run Models CLI
+        id: run_models
         run: |
-          cd models/
-          python -m scripts.run
+          cd models
+          OUTPUT=$(python -m scripts.run)
+          echo "$OUTPUT"
 
-      - name: Commit & push results
-        uses: actions-js/push@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref_name }}
-          message: "Adding Experiment results [skip ci]"
+          EXP_DIR=$(echo "$OUTPUT" | grep "^EXPERIMENT_DIR=" | cut -d= -f2)
+          echo "experiment_dir=$EXP_DIR" >> $GITHUB_OUTPUT
+
+      - name: Show experiment location
+        run: |
+          echo "## Model Experiment Output" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Experiment directory:**" >> $GITHUB_STEP_SUMMARY
+          echo "\`${{ steps.run_models.outputs.experiment_dir }}\`" >> $GITHUB_STEP_SUMMARY
+
+    
