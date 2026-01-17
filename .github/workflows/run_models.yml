@@ -39,4 +39,10 @@ jobs:
           echo "**Experiment directory:**" >> $GITHUB_STEP_SUMMARY
           echo "\`${{ steps.run_models.outputs.experiment_dir }}\`" >> $GITHUB_STEP_SUMMARY
 
+      - name: Upload experiment results
+        uses: actions/upload-artifact@v4
+        with:
+          name: experiment-results
+          path: models/experiments/${{ steps.run_models.outputs.experiment_dir }}
+
     
