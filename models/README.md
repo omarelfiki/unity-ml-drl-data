@@ -4,6 +4,10 @@
 This directory contains the code for training and evaluating machine learning models for predicting reachability, steps, and time-to-threshold based on the collected datasets. The models are implemented using scikit-learn and can be trained and evaluated using the prediction command-line interfaces (CLI).
 
 ## Models CLI
+Try Models CLI on all collected environments and datasets through GitHub actions here: https://github.com/omarelfiki/unity-ml-drl-data/actions/workflows/run_models.yml
+
+Once completed, the results will be available in the artifacts tab of the workflow run as a zip file containing the collected models and results. A sample of the results can be found in the ```experiments/``` directory.
+
 The ML models CLI can be used to train and evaluate the models on the collected datasets. Existing models can be used to make predictions on new data using the ```--models-dir``` flag.
 
 From within the ```models/``` directory:
