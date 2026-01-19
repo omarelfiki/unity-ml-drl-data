@@ -1,0 +1,10 @@
+{
+  "name": "All on dataset",
+  "user": "runner",
+  "os": null,
+  "data_csv": "../data/normalized/normalized_v2.csv",
+  "env": "All",
+  "timestamp": "2026-01-17_12-27",
+  "version": "v2",
+  "experiment_name": "exp_All_v2_2026-01-17_12-27"
+}

@@ -1,0 +1,6 @@
+,Predicted 0,Predicted 1,PushBlock
+Actual 0,0.0,0.0,
+Actual 1,1.0,3.0,
+Accuracy,,,0.75
+Precision,,,1.0
+ROC AUC,,,

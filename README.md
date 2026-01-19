@@ -30,6 +30,7 @@ python setup_env.py
 See [```SETUP.md```](https://www.github.com/omarelfiki/unity-ml-drl-data/tree/main/SETUP.md)for in-depth installation steps.
 
 ### Training
+from ```training/```:
 ```
 python -m scripts.train [-h] --config <config_file> --run-id <run_id> [--num-steps <int>] [--headless <env_path>]
 ```
@@ -37,8 +38,23 @@ python -m scripts.train [-h] --config <config_file> --run-id <run_id> [--num-ste
 
 See [```training/README.md```](https://www.github.com/omarelfiki/unity-ml-drl-data/tree/main/training/README.md) for more information on the `training` package.
 
+### Modeling
+> Try Models CLI on all collected environments and datasets through GitHub actions here: https://github.com/omarelfiki/unity-ml-drl-data/actions/workflows/run_models.yml
+
+from ```models/```:
+```
+python -m scripts.run [-h] [--test_size <test_size>] [--seed <seed>] [--thresh <thresh>] [--env <env>] [--models-dir <models_dir>] [--data-csv, <data_csv>]
+```
+> Example Usage for modelling script. Results will be available under ```models/experiments/```
+> 
+> Once completed, the results will be available in the artifacts tab of the workflow run as a zip file containing the collected models and results.
+
+See [```models/README.md```](https://www.github.com/omarelfiki/unity-ml-drl-data/tree/main/modles/README.md) for more information on the `models` package.
+
+
+
 ### Results
-Results are obtained in a shared dataset updated each training run with new metrics. Upon being pushed to the repository, data validation checks are executed automatically by GitHub workflows. A summary report is also available providing average dataset values and plots from TensorBoard data for visualization
+Results are obtained in a shared dataset updated each training run with new metrics. Upon being pushed to the repository, data validation checks are executed automatically by GitHub workflows. A summary report is also available providing average dataset values and plots from TensorBoard data for visualization. 
 
 See [```data/```](https://www.github.com/omarelfiki/unity-ml-drl-data/tree/main/data) for results and documentation.
 
