@@ -1,0 +1,6 @@
+,Predicted 0,Predicted 1,Basic
+Actual 0,1.0,0.0,
+Actual 1,0.0,6.0,
+Accuracy,,,1.0
+Precision,,,1.0
+ROC AUC,,,1.0
