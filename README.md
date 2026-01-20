@@ -39,7 +39,7 @@ python -m scripts.train [-h] --config <config_file> --run-id <run_id> [--num-ste
 See [```training/README.md```](https://www.github.com/omarelfiki/unity-ml-drl-data/tree/main/training/README.md) for more information on the `training` package.
 
 ### Modeling
-> Try Models CLI on all collected environments and datasets through GitHub actions here: https://github.com/omarelfiki/unity-ml-drl-data/actions/workflows/run_models.yml
+> See Models CLI on all collected environments and datasets through GitHub actions here: https://github.com/omarelfiki/unity-ml-drl-data/actions/workflows/run_models.yml. Artifacts can be downloaded. Contact repository administrators for run access.
 
 from ```models/```:
 ```
